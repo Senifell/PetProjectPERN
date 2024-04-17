@@ -1,0 +1,25 @@
+.registration-form-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .registration-image {
+    flex: 1;
+    margin-left: 50px; /* Отступ слева */
+    padding: 10px; /* Отступ вокруг картинки */
+  }
+  
+  .registration-image img {
+    max-width: 60%; /* Максимальная ширина картинки - 100% от родительского контейнера */
+    height: auto; /* Автоматическая высота, чтобы сохранить пропорции */
+  }
+  
+  .registration-form {
+    flex: 2;
+    margin-right: 120px; /* Отступ слева */
+    max-width: 400px;
+  }
+
+  .registration-button {
+    margin-right: 20px; /* Добавьте нужный отступ справа */
+  }
