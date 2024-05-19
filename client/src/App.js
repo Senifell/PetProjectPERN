@@ -9,6 +9,10 @@ import People from "./components/people.component";
 import PeoplesList from "./components/people-list.component";
 import Account from "./components/account.component";
 
+import ListGames from "./components/list-games.component";
+import PrivateGames from "./components/private-games.component";
+import SteamGames from "./components/steam-games.component";
+
 import { useUser } from "./userContext";
 
 import NotFound from "./NotFound";
@@ -73,6 +77,36 @@ function App() {
             </>
           )}
           {loggedIn && (
+            <li className="nav-item">
+              <Link
+                to={user ? `/list-games/${user.id}` : "/list-games"}
+                className="nav-link"
+              >
+                Коллекции игр
+              </Link>
+            </li>
+          )}
+          {loggedIn && (
+            <li className="nav-item">
+              <Link
+                to={user ? `/private-games/${user.id}` : "/private-games"}
+                className="nav-link"
+              >
+                Список игр
+              </Link>
+            </li>
+          )}
+          {loggedIn && (
+            <li className="nav-item">
+              <Link
+                to={user ? `/steam-games/${user.id}` : "/steam-games"}
+                className="nav-link"
+              >
+                Steam игры
+              </Link>
+            </li>
+          )}
+          {loggedIn && (
             <li className="nav-item ml-auto">
               <button className="btn btn-link nav-link" onClick={handleLogout}>
                 Выход
@@ -104,19 +138,19 @@ function App() {
         style={{
           backgroundColor: "rgba(200, 240, 255, 0.5)",
           padding: "20px", // Отступ со всех сторон
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1000px))", // Задаем ширину столбцов
-          //gridGap: '20px', // Контейнер регулируется от размеров его внутренних элементов
-          justifyContent: "left",
-          maxWidth: "1000px",
+          maxWidth: "80%",
         }}
       >
         <Routes>
           <Route path="/" element={<PeoplesList />} />
           <Route path="/people" element={<PeoplesList />} />
+
           <Route path="/add" element={<AddPeople />} />
           <Route path="/people/:id" element={<People />} />
           <Route path="/account/:userId" element={<Account />} />
+          <Route path="/list-games/:userId" element={<ListGames />} />
+          <Route path="/private-games/:userId" element={<PrivateGames />} />
+          <Route path="/steam-games/:userId" element={<SteamGames />} />
 
           <Route
             path="/user"

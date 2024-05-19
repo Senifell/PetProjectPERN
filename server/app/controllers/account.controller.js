@@ -18,6 +18,7 @@ exports.create = (req, res) => {
     surname: req.body.surname,
     gender: req.body.gender,
     description: req.body.description,
+    id_steam: req.body.id_steam,
     picture: req.body.picture,
     b_deleted: 0,
   };
@@ -89,6 +90,7 @@ exports.update = (req, res) => {
             surname: req.body.surname,
             gender: req.body.gender,
             description: req.body.description,
+            id_steam: req.body.id_steam,
             picture: req.body.picture,
             b_deleted: 0,
           };

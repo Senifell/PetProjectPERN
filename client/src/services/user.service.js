@@ -1,32 +1,32 @@
-import http from "../http-common";
+import https from "../https-common";
 
 class UserDataService {
   getAll() {
-    return http.get("/user");
+    return https.get("/user");
   }
 
   get(id) {
-    return http.get(`/user/${id}`);
+    return https.get(`/user/${id}`);
   }
 
   create(data) {
-    return http.post("/user", data);
+    return https.post("/user", data);
   }
 
   update(id, data) {
-    return http.put(`/user/${id}`, data);
+    return https.put(`/user/${id}`, data);
   }
 
   delete(id) {
-    return http.delete(`/user/${id}`);
+    return https.delete(`/user/${id}`);
   }
 
   deleteAll() {
-    return http.delete(`/user`);
+    return https.delete(`/user`);
   }
 
   signInUser(username, password) {
-    return http.post('/user/login', { username, password });
+    return https.post('/user/login', { username, password });
   }
 }
 

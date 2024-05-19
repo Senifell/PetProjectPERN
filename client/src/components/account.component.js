@@ -16,6 +16,7 @@ function Account(props) {
     surname: "",
     gender: "",
     description: "",
+    id_steam: null,
     picture: "",
   });
 
@@ -101,6 +102,19 @@ function Account(props) {
                 id="surname"
                 name="surname"
                 value={currentAccount.surname}
+                onChange={onChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="id_steam">ID Steam</label>
+              <input
+                type="number"
+                className="form-control"
+                id="id_steam"
+                placeholder="Steam ID"
+                name="id_steam"
+                value={currentAccount.id_steam}
                 onChange={onChange}
               />
             </div>

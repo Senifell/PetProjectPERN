@@ -13,11 +13,11 @@ const fetchData = async (id, navigate) => {
   };
 
   // Выполнение GET-запроса с токеном
-  return https.get(`/account/${id}`, { headers });
+  return https.get(`/private-games/${id}`, { headers });
 };
 
-class AccountDataService {
-  get(id, navigate) {
+class PrivateGamesDataService {
+  getAll(id, navigate) {
     return fetchData(id, navigate);
   }
 
@@ -32,7 +32,7 @@ class AccountDataService {
       Authorization: `Bearer ${token}`,
     };
 
-    return https.post("/account", data, { headers });
+    return https.post("/private-games", data, { headers });
   }
 
   update(id, data) {
@@ -46,7 +46,7 @@ class AccountDataService {
       Authorization: `Bearer ${token}`,
     };
 
-    return https.put(`/account/${id}`, data, { headers });
+    return https.put(`/private-games/${id}`, data, { headers });
   }
 
   delete(id) {
@@ -60,10 +60,10 @@ class AccountDataService {
       Authorization: `Bearer ${token}`,
     };
 
-    return https.delete(`/account/${id}`, { headers });
+    return https.delete(`/private-games/${id}`, { headers });
   }
 }
 
-const accountDataServiceInstance = new AccountDataService();
+const privateGamesDataServiceInstance = new PrivateGamesDataService();
 
-export default accountDataServiceInstance;
+export default privateGamesDataServiceInstance;

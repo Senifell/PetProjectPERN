@@ -18,6 +18,9 @@ module.exports = (sequelize, Sequelize) => {
       picture: {
         type: Sequelize.STRING
       },
+      id_steam_account: {
+        type: Sequelize.INTEGER
+      },
       b_deleted: {
         type: Sequelize.BOOLEAN
       }

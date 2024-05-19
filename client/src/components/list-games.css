@@ -1,0 +1,39 @@
+.list-games-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 20px; /* Промежуток между коробками */
+  }
+  
+  .list-games-box {
+    flex: 1 1 calc(33.33% - 20px); /* Определяет ширину кнопки добавления */
+    max-width: calc(33.33% - 20px); /* Максимальная ширина кнопки добавления */
+    min-width: 200px; /* Минимальная ширина каждой коробки */
+    height: auto; /* Высота каждой коробки */
+    min-height: 200px;
+    border: 2px solid #000; /* Рамка */
+    border-radius: 20px;
+    padding: 10px; /* Отступы внутри коробки */
+    margin: 0; /* Убираем внешние отступы, так как они учитываются внутри .list-games-container */
+    background-color: antiquewhite;
+  }
+  
+  .add-game-icon {
+    flex: 1 1 calc(33.33% - 20px); /* Определяет ширину кнопки добавления */
+    max-width: calc(33.33% - 20px); /* Максимальная ширина кнопки добавления */
+    min-width: 200px; /* Минимальная ширина кнопки добавления */
+    height: auto; /* Высота кнопки добавления */
+    min-height: 200px;
+    border: 2px solid #000; /* Рамка */
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: antiquewhite;
+    padding: 20px; /* Отступы внутри коробки */
+  }
+  
+  .add-game-icon span {
+    font-size: 64px;
+  }

@@ -6,6 +6,9 @@
 /.pnp
 .pnp.js
 
+/certs/localhost-key.pem
+/certs/localhost.pem
+
 # testing
 /coverage
 

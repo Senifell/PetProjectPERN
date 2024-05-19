@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/certs/localhost-key.pem
+/certs/localhost.pem
 .env
 /.pnp
 .pnp.js

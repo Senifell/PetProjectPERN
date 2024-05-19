@@ -1,34 +1,34 @@
-import http from "../http-common";
+import https from "../https-common";
 
 //meany
 
 class PeopleDataService {
   getAll() {
-    return http.get("/people");
+    return https.get("/people");
   }
 
   get(id) {
-    return http.get(`/people/${id}`);
+    return https.get(`/people/${id}`);
   }
 
   create(data) {
-    return http.post("/people", data);
+    return https.post("/people", data);
   }
 
   update(id, data) {
-    return http.put(`/people/${id}`, data);
+    return https.put(`/people/${id}`, data);
   }
 
   delete(id) {
-    return http.delete(`/people/${id}`);
+    return https.delete(`/people/${id}`);
   }
 
   deleteAll() {
-    return http.delete(`/people`);
+    return https.delete(`/people`);
   }
 
   findByTitle(title) {
-    return http.get(`/people?title=${title}`);
+    return https.get(`/people?title=${title}`);
   }
 }
 
