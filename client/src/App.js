@@ -4,14 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 import RegistrationForm from "./components/registrationForm";
-import AddPeople from "./components/add-people.component";
-import People from "./components/people.component";
-import PeoplesList from "./components/people-list.component";
 import Account from "./components/account.component";
 
 import ListGames from "./components/list-games.component";
 import PrivateGames from "./components/private-games.component";
 import SteamGames from "./components/steam-games.component";
+
+import PublicListGames from "./components/public-list-games.component";
 
 import { useUser } from "./userContext";
 
@@ -23,11 +22,12 @@ function App() {
   const navigate = useNavigate();
 
   // Задаем путь к картинке, которую вы хотите использовать в качестве фона
-  const imagePath = process.env.PUBLIC_URL + "/background.jpg";
+  //const imagePath = process.env.PUBLIC_URL + "/background.jpg";
 
   // Устанавливаем картинку в качестве фона только для элемента с классом "container"
   const appStyles = {
-    backgroundImage: `url('${imagePath}')`,
+    backgroundColor: "#1A1A1D", //C5C6C7 1F2833
+    //backgroundImage: `url('${imagePath}')`,
     height: "100vh",
   };
 
@@ -58,24 +58,10 @@ function App() {
   return (
     <div style={appStyles}>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <Link to={"/people"} className="navbar-brand">
+        <Link to={"/list-games"} className="navbar-brand">
           Главная страница
         </Link>
         <div className="navbar-nav mr-auto">
-          {loggedIn && (
-            <>
-              <li className="nav-item">
-                <Link to={"/people"} className="nav-link">
-                  Список редисок
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to={"/add"} className="nav-link">
-                  Добавление редисок
-                </Link>
-              </li>
-            </>
-          )}
           {loggedIn && (
             <li className="nav-item">
               <Link
@@ -136,17 +122,18 @@ function App() {
       <div
         className="container mt-3"
         style={{
-          backgroundColor: "rgba(200, 240, 255, 0.5)",
-          padding: "20px", // Отступ со всех сторон
+          backgroundColor: "white", //C5C6C7  1F2833
+          padding: "20px",
           maxWidth: "80%",
+          // 66FCF1 45A29E
+          border: "5px solid #6F2232",
+          borderRadius: "5px", // #1A1A1D, #4E4E50, #6F2232, #950740, #C3073F
+
         }}
       >
         <Routes>
-          <Route path="/" element={<PeoplesList />} />
-          <Route path="/people" element={<PeoplesList />} />
-
-          <Route path="/add" element={<AddPeople />} />
-          <Route path="/people/:id" element={<People />} />
+          <Route path="/" element={<PublicListGames />} />
+          <Route path="/list-games" element={<PublicListGames />} />
           <Route path="/account/:userId" element={<Account />} />
           <Route path="/list-games/:userId" element={<ListGames />} />
           <Route path="/private-games/:userId" element={<PrivateGames />} />

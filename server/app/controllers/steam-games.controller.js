@@ -61,7 +61,6 @@ exports.findOne = (req, res) => {
 exports.findAll = async (req, res) => {
   const { userId, refresh, page = 1, pageSize = 50, search = "" } = req.query;
   const offset = (page - 1) * pageSize;
-  console.log(refresh);
 
   if (refresh === 'true') {
     // Стим, получение всего списка игр (id, name), пропускаем пустые, в идеале выцепить только игры

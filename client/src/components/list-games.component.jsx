@@ -4,13 +4,10 @@ import ListGamesBox from "./list-games-box.component";
 import AddListGamesBox from "./add-list-games-box.component";
 import ErrorComponent from "./error.component";
 import { useUser } from "../userContext";
-import { useNavigate } from "react-router-dom";
-
-import styles from "./list-games.css";
+import "./list-games.css";
 
 function ListGames() {
   const { user } = useUser();
-  const navigate = useNavigate();
 
   const [listGames, setListGames] = useState([]);
   const [error, setError] = useState(null);
@@ -24,7 +21,7 @@ function ListGames() {
       .catch((e) => {
         setError(e.message || "Что-то пошло не так");
       });
-  }, []);
+  }, [user.id]);
 
   useEffect(() => {
     getListGames();
@@ -69,15 +66,15 @@ function ListGames() {
 
   return (
     <div className="list-games-container">
-        {listGames.map((game) => (
-          <ListGamesBox
-            key={game.id}
-            game={game}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
-          />
-        ))}
-        <AddListGamesBox onAdd={handleAdd} id_user={user.id} />
+      {listGames.map((game) => (
+        <ListGamesBox
+          key={game.id}
+          game={game}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+      ))}
+      <AddListGamesBox onAdd={handleAdd} id_user={user.id} />
     </div>
   );
 }

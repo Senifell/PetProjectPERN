@@ -18,7 +18,6 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.people = require("./people.model.js")(sequelize, Sequelize);
 db.users = require("./users.model.js")(sequelize, Sequelize);
 db.accounts = require("./account.model.js")(sequelize, Sequelize);
 db.list_games = require("./list-games.model.js")(sequelize, Sequelize);

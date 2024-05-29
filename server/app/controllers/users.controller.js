@@ -1,5 +1,6 @@
 const db = require("../models");
 const User = db.users;
+const Account = db.accounts;
 const Op = db.Sequelize.Op;
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -50,6 +51,23 @@ exports.create = (req, res) => {
     
         User.create(users)
           .then((data) => {
+            if (data && data.dataValues) {
+              const userId = data.dataValues.id;
+              console.log(userId);
+
+              // Создаем пустую запись в accounts
+              Account.create({id_user: userId, b_deleted: false})
+              .then((data) => {
+                console.log("Create an account for user");
+              })
+              .catch((err) => {
+                res.status(500).send({
+                  message: err.message || "Some error occurred while creating the User-account.",
+                });
+              });
+            } else {
+              console.log("Не удалось получить данные пользователя.");
+            }
             res.send(data);
           })
           .catch((err) => {
@@ -57,6 +75,7 @@ exports.create = (req, res) => {
               message: err.message || "Some error occurred while creating the User.",
             });
           });
+
       });
     })
     .catch((err) => {

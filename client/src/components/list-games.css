@@ -1,39 +1,44 @@
 .list-games-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 20px; /* Промежуток между коробками */
-  }
-  
-  .list-games-box {
-    flex: 1 1 calc(33.33% - 20px); /* Определяет ширину кнопки добавления */
-    max-width: calc(33.33% - 20px); /* Максимальная ширина кнопки добавления */
-    min-width: 200px; /* Минимальная ширина каждой коробки */
-    height: auto; /* Высота каждой коробки */
-    min-height: 200px;
-    border: 2px solid #000; /* Рамка */
-    border-radius: 20px;
-    padding: 10px; /* Отступы внутри коробки */
-    margin: 0; /* Убираем внешние отступы, так как они учитываются внутри .list-games-container */
-    background-color: antiquewhite;
-  }
-  
-  .add-game-icon {
-    flex: 1 1 calc(33.33% - 20px); /* Определяет ширину кнопки добавления */
-    max-width: calc(33.33% - 20px); /* Максимальная ширина кнопки добавления */
-    min-width: 200px; /* Минимальная ширина кнопки добавления */
-    height: auto; /* Высота кнопки добавления */
-    min-height: 200px;
-    border: 2px solid #000; /* Рамка */
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    background-color: antiquewhite;
-    padding: 20px; /* Отступы внутри коробки */
-  }
-  
-  .add-game-icon span {
-    font-size: 64px;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* //66FCF1 45A29E  //C5C6C7  1F2833 */
+/* // #1A1A1D, #4E4E50, #6F2232, #950740, #C3073F */
+.list-games-box {
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: calc(33.33% - 20px);
+  min-width: 200px;
+  height: auto;
+  min-height: 200px;
+  /* border: 5px solid #a6e9e9; */
+  border: 5px solid #922c2c;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 0;
+  background-color: rgba(250, 117, 117, 0.377);
+  color: #6e0318;
+  /* backrgb(78, 11, 11)color: rgba(205, 247, 244, 0.507); */
+}
+
+.add-game-icon {
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: calc(33.33% - 20px);
+  min-width: 200px;
+  height: auto;
+  min-height: 200px;
+  border: 5px solid #922c2c;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: rgba(250, 95, 95, 0.281);
+  padding: 20px;
+}
+
+.add-game-icon span {
+  font-size: 64px;
+}

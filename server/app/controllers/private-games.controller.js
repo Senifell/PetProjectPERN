@@ -56,8 +56,6 @@ exports.findOne = (req, res) => {
 // Retrieve all People from the database.
 exports.findAll = (req, res) => {
   const id = req.params.id;
-  console.log(id);
-  // var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
 
   PrivateGames.findAll({ where: { id_user: id, b_deleted: false } })
     .then((data) => {
@@ -73,7 +71,7 @@ exports.findAll = (req, res) => {
 // Update a List of games by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-  console.log(id);
+
   if (id == "null") {
     // Create
     const privateGames = {
@@ -161,7 +159,7 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   PrivateGames.update(
-    { b_deleted: 1 },
+    { b_deleted: true },
     {
       where: { id: id },
     }

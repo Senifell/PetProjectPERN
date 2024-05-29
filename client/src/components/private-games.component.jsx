@@ -13,7 +13,6 @@ import {
 
 // import AddPrivateGames from "./add-private-games.component";
 import { useUser } from "../userContext";
-import { useNavigate } from "react-router-dom";
 
 // import styles from "./list-games.css";
 
@@ -54,7 +53,7 @@ function PrivateGames() {
       .catch((e) => {
         setError(e.message || "Что-то пошло не так");
       });
-  }, []);
+  }, [user.id]);
 
   useEffect(() => {
     getPrivateGames();

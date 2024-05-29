@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import accountDataServiceInstance from "../services/account.service";
 import { withRouter } from "../common/with-router";
 import { useUser } from "../userContext";
-import { useNavigate } from 'react-router-dom';
-import ErrorComponent from './error.component';
+import { useNavigate } from "react-router-dom";
+import ErrorComponent from "./error.component";
 
 function Account(props) {
   const { user } = useUser();
@@ -16,7 +16,7 @@ function Account(props) {
     surname: "",
     gender: "",
     description: "",
-    id_steam: null,
+    steam_id: "",
     picture: "",
   });
 
@@ -32,42 +32,44 @@ function Account(props) {
     }));
   };
 
-  const getAccount = useCallback((id) => {
-    accountDataServiceInstance.get(id, navigate)
-      .then((response) => {
-        setCurrentAccount(response.data);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        setError(e.message || 'Что-то пошло не так');
-        console.log(e);
-      });
-  }, [navigate]);
+  const getAccount = useCallback(
+    (id) => {
+      accountDataServiceInstance
+        .get(id, navigate)
+        .then((response) => {
+          setCurrentAccount(response.data);
+        })
+        .catch((e) => {
+          setError(e.message || "Что-то пошло не так");
+        });
+    },
+    [navigate]
+  );
 
   const updateAccount = () => {
-    accountDataServiceInstance.update(currentAccount.id_user, currentAccount)
+    accountDataServiceInstance
+      .update(currentAccount.id_user, currentAccount)
       .then((response) => {
-        console.log(response.data);
         setMessage("Данные аккаунта были успешно обновлены!");
       })
       .catch((e) => {
-        console.log(e);
+        console.log(e); //!!!
       });
   };
 
   const deleteAccount = () => {
-    accountDataServiceInstance.delete(currentAccount.id_user)
+    accountDataServiceInstance
+      .delete(currentAccount.id_user)
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data); //!!!
         props.router.navigate("/");
       })
       .catch((e) => {
-        console.log(e);
+        console.log(e); //!!!
       });
   };
 
   useEffect(() => {
-    console.log(user.id);
     getAccount(user.id);
   }, [user.id, getAccount]);
 
@@ -79,10 +81,10 @@ function Account(props) {
     <div>
       {currentAccount && (
         <div className="edit-form">
-          <h4>Account</h4>
+          <h4>Аккаунт</h4>
           <form>
             <div className="form-group">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="name">Имя</label>
               <input
                 type="text"
                 className="form-control"
@@ -95,7 +97,7 @@ function Account(props) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="surname">Surname</label>
+              <label htmlFor="surname">Фамилия</label>
               <input
                 type="text"
                 className="form-control"
@@ -107,20 +109,20 @@ function Account(props) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="id_steam">ID Steam</label>
+              <label htmlFor="steam_id">ID Steam</label>
               <input
                 type="number"
                 className="form-control"
-                id="id_steam"
+                id="steam_id"
                 placeholder="Steam ID"
-                name="id_steam"
-                value={currentAccount.id_steam}
+                name="steam_id"
+                value={currentAccount.steam_id}
                 onChange={onChange}
               />
             </div>
 
             <div className="form-group">
-              <label>Gender</label>
+              <label>Пол</label>
               <div>
                 <label>
                   <input
@@ -130,7 +132,7 @@ function Account(props) {
                     checked={currentAccount.gender === "Female"}
                     onChange={onChange}
                   />
-                  Female
+                  Женский
                 </label>
               </div>
               <div>
@@ -142,7 +144,7 @@ function Account(props) {
                     checked={currentAccount.gender === "Male"}
                     onChange={onChange}
                   />
-                  Male
+                  Мужской
                 </label>
               </div>
               <div>
@@ -154,17 +156,17 @@ function Account(props) {
                     checked={currentAccount.gender === "Unknown"}
                     onChange={onChange}
                   />
-                  Unknown
+                  Неизвестно
                 </label>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">Дополнительная информация</label>
               <textarea
                 className="form-control"
                 id="description"
-                placeholder="Description"
+                placeholder="Дополнительная информация"
                 name="description"
                 value={currentAccount.description}
                 onChange={onChange}
@@ -172,13 +174,13 @@ function Account(props) {
             </div>
           </form>
 
-          <button className="badge badge-danger mr-2" onClick={deleteAccount}>
+          <button className="btn btn-outline-danger" onClick={deleteAccount}>
             Удалить
           </button>
-
+          <span> </span>
           <button
             type="submit"
-            className="badge badge-success"
+            className="btn btn-outline-primary"
             onClick={updateAccount}
           >
             Обновить

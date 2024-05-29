@@ -47,7 +47,6 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to application." });
 });
 
-require("./app/routes/people.routes")(app);
 require("./app/routes/users.routes")(app);
 require("./app/routes/account.routes")(app);
 require("./app/routes/list-games.routes")(app);
@@ -56,7 +55,7 @@ require("./app/routes/steam-games.routes")(app);
 
 db.sequelize.sync({ force: false })
   .then(() => {
-    console.log('Таблица Account была создана (или уже существует, если force: false).');
+    console.log('Таблица была создана (или уже существует, если force: false).');
   })
   .catch(error => {
     console.error('Ошибка при создании таблицы Account:', error);

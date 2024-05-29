@@ -10,8 +10,8 @@ module.exports = app => {
     // Retrieve a single list of games with id
     router.get("/:id", authenticateToken, listGames.findAll);
 
-    // Retrieve all list of games
-    router.get("/", listGames.findAll);
+    // Retrieve all public list of games
+    router.get("/", listGames.findAllPublic);
     // Update a list of games with id
     router.put("/:id", listGames.update);
         // Delete a list of games with id

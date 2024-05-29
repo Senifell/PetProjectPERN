@@ -18,7 +18,7 @@ exports.create = (req, res) => {
     surname: req.body.surname,
     gender: req.body.gender,
     description: req.body.description,
-    id_steam: req.body.id_steam,
+    steam_id: req.body.steam_id,
     picture: req.body.picture,
     b_deleted: 0,
   };
@@ -38,20 +38,20 @@ exports.create = (req, res) => {
 
 // Find a single Account with an id
 exports.findOne = (req, res) => {
-  const id_user = req.params.id;
-  Account.findOne({ where: {id_user: id_user, b_deleted: false} })
+  const userId = req.params.id;
+  Account.findOne({ where: {id_user: userId, b_deleted: false} })
     .then(data => {
       if (data) {
         res.send(data);
       } else {
         res.status(404).send({
-          message: `Cannot find Account with id=${id_user}.`
+          message: `Cannot find Account with id=${userId}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving Account with id=" + id_user
+        message: "Error retrieving Account with id=" + userId
       });
     });
 };
@@ -90,7 +90,7 @@ exports.update = (req, res) => {
             surname: req.body.surname,
             gender: req.body.gender,
             description: req.body.description,
-            id_steam: req.body.id_steam,
+            steam_id: req.body.steam_id,
             picture: req.body.picture,
             b_deleted: 0,
           };
@@ -120,7 +120,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Account.update({b_deleted: 1}, {
+  Account.update({b_deleted: true}, {
     where: { id_user: id }
   })
     .then(num => {

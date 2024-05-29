@@ -21,6 +21,10 @@ class ListGamesDataService {
     return fetchData(id, navigate);
   }
 
+  getPublicListGames() {
+    return https.get("/list-games");
+  }
+
   create(data) {
     const token = localStorage.getItem("token");
 

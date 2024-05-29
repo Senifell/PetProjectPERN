@@ -70,10 +70,23 @@ exports.findAll = (req, res) => {
     });
 };
 
+// Retrieve all Public List Games from the database.
+exports.findAllPublic = (req, res) => {
+  ListGames.findAll({ where: { b_private: false, b_deleted: false } })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving list of games.",
+      });
+    });
+};
+
 // Update a List of games by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-console.log(id);
   if (id == 'null') {
     console.log('1');
     // Create a list of games

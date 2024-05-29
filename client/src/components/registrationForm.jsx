@@ -5,10 +5,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import registrationImage from "./registrationImage.jpeg";
 import "./RegistrationForm.css";
-import { useUser } from '../userContext'; 
+import { useUser } from "../userContext";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
+//Переписать
 const RegistrationForm = ({ updateLoggedInStatus }) => {
   const [formData, setFormData] = useState({
     id: null,
@@ -64,22 +65,24 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
   };
 
   const handleLogin = async () => {
-    // Предположим, что здесь происходит аутентификация пользователя
-    // и вы успешно получили данные о пользователе после входа.
-    const userData = await checkUser(); // Функция, возвращающая данные пользователя.
+    const userData = await checkUser();
 
     // Вызываем updateUser для обновления контекста с данными пользователя.
-    updateUser({id: userData.id, name: userData.username, email: userData.email});
+    updateUser({
+      id: userData.id,
+      name: userData.username,
+      email: userData.email,
+    });
   };
   const checkUser = async () => {
     if (!checkDataNotEmpty()) {
       console.log("Data isn't full");
       return;
     }
-  
+
     try {
       const response = await customAuthenticateUser(username, password);
-  
+
       setFormData({
         ...formData,
         registered: false,
@@ -91,19 +94,17 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
       localStorage.setItem("token", response.token);
 
       updateLoggedInStatus(true);
-      localStorage.setItem('loggedIn', 'true'); //сохраним, чтобы можно было использовать после перезагрузки страницы
+      localStorage.setItem("loggedIn", "true"); //сохраним, чтобы можно было использовать после перезагрузки страницы
 
       return response.user;
     } catch (error) {
       console.log(error);
-  
+
       updateLoggedInStatus(false);
       setFormData({
         ...formData,
         loginCodeError:
-          error.response && error.response.status
-            ? error.response.status
-            : 500,
+          error.response && error.response.status ? error.response.status : 500,
       });
       return null;
     }
@@ -111,30 +112,25 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
 
   const customAuthenticateUser = async (username, password) => {
     try {
-      const response = await fetch('https://localhost:8080/api/user/login', {
-        method: 'POST',
+      const response = await fetch("https://localhost:8080/api/user/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Authentication failed'); // Обработка ошибки
+        throw new Error("Authentication failed"); // Обработка ошибки
       }
-  
+
       const data = await response.json(); // Получаем данные о пользователе или токен
-      
-      const { token, user } = data;
-      console.log('Token:', token);
-      console.log('UserID:', user.id, ', name:', user.username);
-  
+
       return data; // Возвращаем данные о пользователе или токен
     } catch (error) {
       throw error; // Прокидываем ошибку дальше для обработки в catch
     }
   };
-  
 
   const changeMode = () => {
     updateLoggedInStatus(false);
@@ -166,7 +162,7 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
           loggedIn: false,
           loginCodeError: null,
         });
-        console.log(response.data);
+        //console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -225,8 +221,8 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
       loginCodeError: null,
     });
     updateLoggedInStatus(false);
-    localStorage.removeItem('loggedIn');
-    localStorage.removeItem('token');
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("token");
     navigate("/");
   };
 

@@ -9,18 +9,27 @@ function AddListGamesBox({ onAdd, id_user }) {
     id_user: id_user,
   });
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewGame((prevGame) => ({
       ...prevGame,
-      [name]: name === "b_private" ? e.target.value === "true" : value
+      [name]: name === "b_private" ? value === "true" : value
+    }));
+  };
+  
+  const handleRadioChange = (e) => {
+    const { value } = e.target;
+    setNewGame((prevGame) => ({
+      ...prevGame,
+      b_private: value === "true",
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onAdd(newGame);
-    setNewGame({ name: "", description: "", b_private: false });
+    setNewGame({ name: "", description: "", b_private: true, id_user: id_user });
     setShowForm(false);
   };
 
@@ -61,9 +70,9 @@ function AddListGamesBox({ onAdd, id_user }) {
               <input
                 type="radio"
                 name="b_private"
-                value={true}
+                value="true"
                 checked={newGame.b_private === true}
-                onChange={handleChange}
+                onChange={handleRadioChange}
               />
               Личное
             </label>
@@ -73,9 +82,9 @@ function AddListGamesBox({ onAdd, id_user }) {
               <input
                 type="radio"
                 name="b_private"
-                value={false}
+                value="false"
                 checked={newGame.b_private === false}
-                onChange={handleChange}
+                onChange={handleRadioChange}
               />
               Доступно для всех
             </label>

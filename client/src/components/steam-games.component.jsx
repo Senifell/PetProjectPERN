@@ -3,7 +3,6 @@ import steamGamesDataServiceInstance from "../services/steam-games.service";
 import ErrorComponent from "./error.component";
 
 import {
-  Form,
   FormGroup,
   FormLabel,
   FormControl,
@@ -39,9 +38,8 @@ function SteamGames() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize] = useState(50);
   const [searchTerm, setSearchTerm] = useState("");
-  
 
   const getSteamGames = useCallback(() => {
     steamGamesDataServiceInstance
