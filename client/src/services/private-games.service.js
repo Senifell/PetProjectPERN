@@ -62,6 +62,20 @@ class PrivateGamesDataService {
 
     return https.delete(`/private-games/${id}`, { headers });
   }
+
+  getSteamGames(id) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      throw new Error("Token not found in localStorage.");
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    return https.get(`/private-games/${id}/steam-game`, { headers });
+  }
 }
 
 const privateGamesDataServiceInstance = new PrivateGamesDataService();

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import steamGamesDataServiceInstance from "../services/steam-games.service";
 import ErrorComponent from "./error.component";
 
+import Pagination from "../Pagination";
+
 import {
   FormGroup,
   FormLabel,
@@ -40,10 +42,12 @@ function SteamGames() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(50);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFree, setIsFree] = useState("all");
+  const [isLanguage, setIsLanguage] = useState("all");
 
   const getSteamGames = useCallback(() => {
     steamGamesDataServiceInstance
-      .getAll(user.id, false, currentPage, pageSize, searchTerm)
+      .getAll(user.id, currentPage, pageSize, searchTerm, isFree, isLanguage)
       .then((response) => {
         console.log(response.data);
         setSteamGames(
@@ -58,7 +62,7 @@ function SteamGames() {
       .catch((e) => {
         setError(e.message || "Что-то пошло не так");
       });
-  }, [user.id, currentPage, pageSize, searchTerm]);
+  }, [user.id, currentPage, pageSize, searchTerm, isFree, isLanguage]);
 
   useEffect(() => {
     getSteamGames();
@@ -66,7 +70,18 @@ function SteamGames() {
 
   const handleUpdateAll = () => {
     steamGamesDataServiceInstance
-      .getAll(user.id, true)
+      .updateAll(user.id, "list-games") // Обновить список игр из Стим
+      .then(() => {
+        getSteamGames();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const handleUpdateAllInfo = () => {
+    steamGamesDataServiceInstance
+      .updateAll(user.id, "info") // обновить инфу по всем играм
       .then(() => {
         getSteamGames();
       })
@@ -81,6 +96,7 @@ function SteamGames() {
   };
 
   const handleUpdateData = (id) => {
+    console.log(id);
     steamGamesDataServiceInstance
       .update(id)
       .then(() => {
@@ -108,8 +124,14 @@ function SteamGames() {
     setCurrentPage(1);
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const handleIsFreeChange = (e) => {
+    setIsFree(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleIsLanguageChange = (e) => {
+    setIsLanguage(e.target.value);
+    setCurrentPage(1);
   };
 
   if (error) {
@@ -119,17 +141,61 @@ function SteamGames() {
   return (
     <div className="container">
       <h2 className="bg-beige p-3">Список игр</h2>
-      <button onClick={handleUpdateAll}>Обновить</button>
+      <button className="btn btn-primary" onClick={handleUpdateAll}>
+        Обновить
+      </button>
+      <span> </span>
+      <button className="btn btn-secondary" onClick={handleUpdateAllInfo}>
+        Обновить данные по всем играм
+      </button>
 
-      <FormGroup>
+      {/* <FormGroup>
         <FormLabel>Поиск по имени</FormLabel>
         <FormControl
-          type="text"
+          type="search"
+          class="form-control rounded"
           placeholder="Введите имя игры"
           value={searchTerm}
           onChange={handleSearch}
         />
-      </FormGroup>
+      </FormGroup> */}
+      <div>
+        <label for="isFree">Статус:</label>
+        <select
+          name="isFree"
+          id="isFree"
+          value={isFree}
+          onChange={handleIsFreeChange}
+        >
+          <option value="all">Все</option>
+          <option value="free">Бесплатные</option>
+          <option value="no_free">Платные</option>
+        </select>
+      </div>
+      <div>
+        <label for="language">Поддерживает язык:</label>
+        <select
+          name="language"
+          id="language"
+          value={isLanguage}
+          onChange={handleIsLanguageChange}
+        >
+          <option value="all">Все</option>
+          <option value="rus">Русский</option>
+          <option value="en">Английский</option>
+        </select>
+      </div>
+      <div>
+        <label for="searchTerm">Поиск по имени</label>
+        <input
+          type="search"
+          id="searchTerm"
+          className="form-control rounded"
+          placeholder="Введите имя игры"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
@@ -205,18 +271,27 @@ function SteamGames() {
                 <td>{game.genres}</td>
                 <td>{game.n_recommendation}</td>
                 <td>
-                  <button onClick={() => handleUpdateData(game.id)}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleUpdateData(game.id)}
+                  >
                     Обновить данные
                   </button>
                 </td>
                 <td>
-                  <button onClick={() => handleMoreData(game)}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleMoreData(game)}
+                  >
                     Подробнее
                   </button>
                 </td>
                 <td>
-                  <button onClick={() => handleDelete(game.id)}>
-                    &#128465;
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(game.id)}
+                  >
+                    Удалить &#128465;
                   </button>
                 </td>
               </tr>
@@ -229,17 +304,13 @@ function SteamGames() {
         </tbody>
       </table>
 
-      <div className="pagination">
-        {Array.from({ length: steamGames.totalPages }, (_, index) => (
-          <Button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            active={index + 1 === currentPage}
-          >
-            {index + 1}
-          </Button>
-        ))}
-      </div>
+      <Pagination
+        className="pagination-bar"
+        currentPage={currentPage}
+        totalCount={steamGames.totalItems}
+        pageSize={pageSize}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
     </div>
   );
 }

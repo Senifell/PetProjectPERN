@@ -10,6 +10,8 @@ module.exports = app => {
     // Retrieve a single list of games with id
     router.get("/:id", authenticateToken, privateGames.findAll);
 
+    router.get("/:id/steam-game", authenticateToken, privateGames.getSteamOwnedGames);
+
     // Retrieve all list of games
     router.get("/", privateGames.findAll);
     // Update a list of games with id

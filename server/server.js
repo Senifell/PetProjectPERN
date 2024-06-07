@@ -1,20 +1,23 @@
 const express = require("express");
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config();
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
+require("dotenv").config();
 // const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
+
+const schedule = require("node-schedule");
+const scheduleUpdateSteamGameInfo = require("./app/schedulers/updateSteamGameInfo");
 
 const app = express();
 
 const options = {
-  key: fs.readFileSync(path.resolve(__dirname, 'certs/localhost-key.pem')),
-  cert: fs.readFileSync(path.resolve(__dirname, 'certs/localhost.pem'))
+  key: fs.readFileSync(path.resolve(__dirname, "certs/localhost-key.pem")),
+  cert: fs.readFileSync(path.resolve(__dirname, "certs/localhost.pem")),
 };
 
 var corsOptions = {
-  origin: "https://localhost:8081"
+  origin: "https://localhost:8081",
 };
 
 // var allowedOrigins = ['https://localhost']; // Разрешенный список доменов
@@ -30,10 +33,10 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(express.json()); 
+app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));  
+app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models");
 // db.sequelize.sync();
@@ -53,13 +56,20 @@ require("./app/routes/list-games.routes")(app);
 require("./app/routes/private-games.routes")(app);
 require("./app/routes/steam-games.routes")(app);
 
-db.sequelize.sync({ force: false })
+db.sequelize
+  .sync({ force: false })
   .then(() => {
-    console.log('Таблица была создана (или уже существует, если force: false).');
+    console.log(
+      "Таблица была создана (или уже существует, если force: false)."
+    );
   })
-  .catch(error => {
-    console.error('Ошибка при создании таблицы Account:', error);
+  .catch((error) => {
+    console.error("Ошибка при создании таблицы Account:", error);
   });
+
+const job = schedule.scheduleJob("*/5 * * * *", async () =>
+  scheduleUpdateSteamGameInfo.doUpdate()
+);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

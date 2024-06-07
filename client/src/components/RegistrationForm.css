@@ -1,25 +1,27 @@
 .registration-form-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .registration-image {
-    flex: 1;
-    margin-left: 50px; /* Отступ слева */
-    padding: 10px; /* Отступ вокруг картинки */
-  }
-  
-  .registration-image img {
-    max-width: 60%; /* Максимальная ширина картинки - 100% от родительского контейнера */
-    height: auto; /* Автоматическая высота, чтобы сохранить пропорции */
-  }
-  
-  .registration-form {
-    flex: 2;
-    margin-right: 120px; /* Отступ слева */
-    max-width: 400px;
-  }
+  display: flex;
+  align-items: center;
+}
 
-  .registration-button {
-    margin-right: 20px; /* Добавьте нужный отступ справа */
-  }
+.registration-image {
+  flex: 1;
+  margin-left: 50px;
+  padding: 10px;
+}
+
+.registration-image img {
+  max-width: 80%;
+  height: auto;
+  border-radius: 10%;
+  /* border: 5px solid #6F2232; */
+}
+
+.registration-form {
+  flex: 1;
+  margin-right: 20%;
+  max-width: 400px;
+}
+
+.registration-button {
+  margin: 10px 10px 10px 0px;
+}

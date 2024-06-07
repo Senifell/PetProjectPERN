@@ -3,7 +3,7 @@ import UserDataServiceInstance from "../services/user.service";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import registrationImage from "./registrationImage.jpeg";
+import registrationImage from "./logo_registration.jpg";
 import "./RegistrationForm.css";
 import { useUser } from "../userContext";
 
@@ -229,21 +229,21 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
   if (registered) {
     return (
       <div>
-        <h4>Your registration was successful!</h4>
+        <h4>Аккаунт зарегистрирован!</h4>
         <button className="btn btn-success" onClick={newUser}>
-          Log In
+          Войти
         </button>
       </div>
     );
   } else if (loggedIn) {
     return (
       <div>
-        <h4>Your sign in was successful!</h4>
+        <h4>Вход выполнен успешно!</h4>
         <button
           className="btn btn-success registration-button"
           onClick={handleLogout}
         >
-          Log Out
+          Выйти
         </button>
         <Link to="/" className="btn btn-success registration-button">
           Главная страница
@@ -258,14 +258,37 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
         </div>
         <div className="registration-form">
           <div>
+            <button
+              onClick={changeMode}
+              className={`btn registration-button ${
+                !registeredMode
+                  ? "btn-outline-primary disabled"
+                  : "btn-outline-dark"
+              }`}
+            >
+              Вход
+            </button>
+            <button
+              onClick={changeMode}
+              className={`btn registration-button ${
+                !loggedInMode
+                  ? "btn-outline-primary disabled"
+                  : "btn-outline-dark"
+              }`}
+            >
+              Регистрация
+            </button>
+          </div>
+
+          <div>
             <div className="form-group">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">Имя пользователя</label>
               <input
                 type="text"
                 className="form-control"
                 id="username"
                 required
-                placeholder="Username"
+                placeholder="Имя пользователя"
                 value={username}
                 onChange={onChange}
                 name="username"
@@ -274,13 +297,13 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
 
             {registeredMode && (
               <div className="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">E-mail</label>
                 <input
                   type="email"
                   className="form-control"
                   id="email"
                   required
-                  placeholder="Email"
+                  placeholder="E-mail"
                   value={email}
                   onChange={onChange}
                   name="email"
@@ -289,13 +312,13 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
             )}
 
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Пароль</label>
               <input
                 type="password"
                 className="form-control"
                 id="password"
                 required
-                placeholder="Password"
+                placeholder="Пароль"
                 value={password}
                 onChange={onChange}
                 name="password"
@@ -314,20 +337,12 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
               </div>
             )}
 
-            {!registeredMode && (
-              <button
-                onClick={changeMode}
-                className="btn btn-success registration-button"
-              >
-                Register Now
-              </button>
-            )}
             {registeredMode && (
               <button
                 onClick={saveUser}
                 className="btn btn-success registration-button"
               >
-                Register
+                Зарегистрироваться
               </button>
             )}
             {loggedInMode && (
@@ -335,15 +350,7 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
                 onClick={handleLogin}
                 className="btn btn-success registration-button"
               >
-                Log In
-              </button>
-            )}
-            {!loggedInMode && (
-              <button
-                onClick={changeMode}
-                className="btn btn-success registration-button"
-              >
-                Log In Now
+                Войти
               </button>
             )}
           </div>

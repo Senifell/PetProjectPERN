@@ -60,7 +60,8 @@ function PrivateGames() {
   }, [getPrivateGames]);
 
   const handleUpdateClick = (game) => {
-    setNewGame(game);
+    const { n_playtime, ...gameToUpdate } = game;
+    setNewGame(gameToUpdate);
     setIsEditing(true);
     setShowModal(true); // Открываем модальное окно для редактирования
   };
@@ -127,6 +128,17 @@ function PrivateGames() {
     setShowModal(true);
   };
 
+  const handleAddSteamButtonClick = () => {
+    privateGamesDataServiceInstance
+      .getSteamGames(user.id)
+      .then((response) => {
+        setPrivateGames(response.data);
+      })
+      .catch((e) => {
+        setError(e.message || "Что-то пошло не так");
+      });
+  };
+
   if (error) {
     return <ErrorComponent message={error} />;
   }
@@ -134,8 +146,13 @@ function PrivateGames() {
   return (
     <div className="container">
       <h2 className="bg-beige p-3">Список игр</h2>
-      <button onClick={handleAddButtonClick}>Добавить</button>
-
+      <button className="btn btn-success" onClick={handleAddButtonClick}>
+        Добавить
+      </button>{" "}
+      <span />
+      <button className="btn btn-primary" onClick={handleAddSteamButtonClick}>
+        Загрузить список игр из Steam
+      </button>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Добавить игру</Modal.Title>
@@ -200,21 +217,20 @@ function PrivateGames() {
             <Button variant="secondary" onClick={() => setShowModal(false)}>
               Закрыть
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="success" onClick={handleSubmit}>
               Сохранить
             </Button>
           </Form>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
       </Modal>
-
       <table className="table">
         <thead className="bg-beige">
           <tr>
             <th scope="col">Название</th>
             <th scope="col">Мин. количество игроков</th>
             <th scope="col">Макс. количество игроков</th>
-            <th scope="col">Время игры (мин)</th>
+            <th scope="col">Время игры (час)</th>
             <th scope="col">Описание</th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -229,12 +245,20 @@ function PrivateGames() {
               <td>{game.n_playtime}</td>
               <td>{game.description}</td>
               <td>
-                <button onClick={() => handleUpdateClick(game)}>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => handleUpdateClick(game)}
+                >
                   Редактировать
                 </button>
               </td>
               <td>
-                <button onClick={() => handleDelete(game.id)}>&#128465;</button>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(game.id)}
+                >
+                  Удалить &#128465;
+                </button>
               </td>
             </tr>
           ))}

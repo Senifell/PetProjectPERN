@@ -21,7 +21,7 @@ db.sequelize = sequelize;
 db.users = require("./users.model.js")(sequelize, Sequelize);
 db.accounts = require("./account.model.js")(sequelize, Sequelize);
 db.list_games = require("./list-games.model.js")(sequelize, Sequelize);
-db.private_games = require("./private-games.model.js")(sequelize, Sequelize);
-db.steam_games = require("./steam-games.model.js")(sequelize, Sequelize);
+const SteamGames = db.steam_games = require("./steam-games.model.js")(sequelize, Sequelize);
+const PrivateGames = db.private_games = require("./private-games.model.js")(sequelize, Sequelize, SteamGames);
 
 module.exports = db;

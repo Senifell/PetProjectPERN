@@ -1,9 +1,12 @@
 const db = require("../models");
+const sequelize = db.sequelize;
+require("dotenv").config();
 const PrivateGames = db.private_games;
+const Account = db.accounts;
 const Op = db.Sequelize.Op;
+const axios = require("axios");
 
 exports.create = (req, res) => {
-  // Validate request
   if (!req.body.id_user) {
     res.status(400).send({
       message: "Content can not be empty!",
@@ -22,7 +25,6 @@ exports.create = (req, res) => {
     b_deleted: 0,
   };
 
-  // Save in the database
   PrivateGames.create(privateGames)
     .then((data) => {
       res.send(data);
@@ -53,27 +55,37 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Retrieve all People from the database.
 exports.findAll = (req, res) => {
   const id = req.params.id;
 
-  PrivateGames.findAll({ where: { id_user: id, b_deleted: false } })
+  sequelize
+    .query(
+      `SELECT p.id, COALESCE(NULLIF(p.name, ''), s.name) AS name, COALESCE(NULLIF(p.description, ''), s.short_description) AS description, 
+              p.min_player, p.max_player, ROUND(p.n_playtime / 60::numeric, 1) AS n_playtime FROM private_games p 
+    LEFT JOIN steam_games s ON s.id_app_steam = p.id_app_steam AND s.b_deleted = false
+    WHERE p.id_user = :id_user AND p.b_deleted = false
+    ORDER BY COALESCE(NULLIF(p.name, ''), s.name)`,
+      {
+        replacements: { id_user: id },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    )
     .then((data) => {
       res.send(data);
     })
-    .catch((err) => {
+    .catch((error) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving game.",
+        message: error.message || "Some error occurred while retrieving game.",
       });
     });
 };
 
-// Update a List of games by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
 
+  console.log(req.body);
+
   if (id == "null") {
-    // Create
     const privateGames = {
       name: req.body.name,
       id_user: req.body.id_user,
@@ -85,7 +97,6 @@ exports.update = (req, res) => {
       n_playtime: req.body.n_playtime,
       b_deleted: 0,
     };
-    // Save in the database
     PrivateGames.create(privateGames)
       .then((data) => {
         res.send(data);
@@ -114,12 +125,13 @@ exports.update = (req, res) => {
               }
             })
             .catch((err) => {
+              console.error("Произошла ошибка:", err.message);
+              console.error("Стек вызовов:", err.stack);
               res.status(500).send({
                 message: "Error updating game with id=" + id,
               });
             });
         } else {
-          // Create
           const privateGames = {
             name: req.body.name,
             id_user: req.body.id_user,
@@ -131,7 +143,6 @@ exports.update = (req, res) => {
             n_playtime: req.body.n_playtime,
             b_deleted: 0,
           };
-          // Save in the database
           PrivateGames.create(privateGames)
             .then((data) => {
               res.send(data);
@@ -144,9 +155,6 @@ exports.update = (req, res) => {
         }
       })
       .catch((err) => {
-        console.error("Произошла ошибка:", err.message); // Вывести сообщение об ошибке в консоль
-        console.error("Стек вызовов:", err.stack); // Вывести стек вызовов в консоль
-
         res.status(500).send({
           message: "Some 2 error occurred while creating the game.",
         });
@@ -154,7 +162,6 @@ exports.update = (req, res) => {
   }
 };
 
-// Delete with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
@@ -178,6 +185,100 @@ exports.delete = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: "Could not delete game with id=" + id,
+      });
+    });
+};
+
+exports.getSteamOwnedGames = (req, res) => {
+  const idUser = req.params.id;
+
+  Account.findOne({ where: { id_user: idUser, b_deleted: false } })
+    .then(async (data) => {
+      if (data && data.dataValues) {
+        try {
+          const steamId = data.dataValues.steam_id;
+          console.log(steamId);
+
+          if (!steamId) {
+            return res.status(400).send({
+              message: `SteamID is required!`,
+            });
+          }
+
+          const url = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`;
+
+          const response = await axios.get(url, {
+            params: {
+              key: process.env.STEAM_API_KEY,
+              steamid: steamId,
+              include_played_free_games: true,
+            },
+          });
+
+          if (response.data.response && !response.data.response.games) {
+            return res
+              .status(404)
+              .json({ error: "No games found for this SteamID" });
+          }
+
+          async function fetchAndSaveSteamGames(games) {
+            for (const game of games) {
+              try {
+                const existingGame = await PrivateGames.findOne({
+                  where: {
+                    id_app_steam: game.appid,
+                    id_user: idUser,
+                    b_deleted: false,
+                  },
+                });
+
+                if (existingGame) {
+                  // Если запись уже существует, обновляем её
+                  await existingGame.update({
+                    n_playtime: game.playtime_forever,
+                  });
+                } else {
+                  // Если запись не существует, вставляем новую запись
+                  await PrivateGames.create({
+                    id_app_steam: game.appid,
+                    id_user: idUser,
+                    n_playtime: game.playtime_forever,
+                    is_get: true,
+                  });
+                }
+              } catch (error) {
+                console.error(
+                  `Failed to upsert game with appid ${game.appid}:`,
+                  error.message
+                );
+                // Пропустить текущую запись и продолжить со следующей
+              }
+            }
+          }
+
+          await fetchAndSaveSteamGames(response.data.response.games);
+        } catch (error) {
+          if (error.response) {
+            // Ошибки, которые приходят от Steam API
+            return res
+              .status(error.response.status)
+              .json({ error: error.response.statusText });
+          } else {
+            // Другие ошибки
+            console.error("Произошла ошибка:", err.message);
+            console.error("Стек вызовов:", err.stack);
+            return res.status(500).json({
+              error: "An error occurred while fetching data from Steam API",
+            });
+          }
+        }
+      }
+    })
+    .catch((err) => {
+      console.error("Произошла ошибка:", err.message);
+      console.error("Стек вызовов:", err.stack);
+      res.status(500).send({
+        message: "Error retrieving account with id=" + idUser,
       });
     });
 };

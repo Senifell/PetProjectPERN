@@ -32,13 +32,13 @@ function App() {
   };
 
   const updateLoggedInStatus = (status) => {
-    console.log('Переданное значение: ', status);
+    console.log("Переданное значение: ", status);
     setLoggedIn(status);
   };
 
   useEffect(() => {
     // Получение значения из локального хранилища при загрузке приложения
-    const storedLoggedIn = localStorage.getItem('loggedIn');
+    const storedLoggedIn = localStorage.getItem("loggedIn");
 
     // Если в локальном хранилище есть значение, установите его в состояние
     if (storedLoggedIn) {
@@ -46,12 +46,11 @@ function App() {
     }
   }, []); // Пустой массив зависимостей гарантирует, что useEffect выполняется только один раз при загрузке
 
-
   //!!! Надо отсюда убрать эту часть и свести к одной функции выхода
   const handleLogout = () => {
     setLoggedIn(false);
-    localStorage.removeItem('loggedIn');
-    localStorage.removeItem('token');
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("token");
     navigate("/");
   };
 
@@ -84,10 +83,7 @@ function App() {
           )}
           {loggedIn && (
             <li className="nav-item">
-              <Link
-                to={user ? `/steam-games/${user.id}` : "/steam-games"}
-                className="nav-link"
-              >
+              <Link to={`/steam-games/${user.id}`} className="nav-link">
                 Steam игры
               </Link>
             </li>
@@ -128,7 +124,6 @@ function App() {
           // 66FCF1 45A29E
           border: "5px solid #6F2232",
           borderRadius: "5px", // #1A1A1D, #4E4E50, #6F2232, #950740, #C3073F
-
         }}
       >
         <Routes>

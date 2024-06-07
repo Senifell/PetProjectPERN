@@ -9,6 +9,8 @@
 /certs/localhost-key.pem
 /certs/localhost.pem
 
+/public/pic
+
 # testing
 /coverage
 
