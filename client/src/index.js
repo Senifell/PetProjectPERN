@@ -5,7 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 //import ReactDOM from 'react-dom';
 
 import App from "./App";
-import { UserProvider } from './userContext';
+import { UserProvider } from "./userContext";
+import { AuthProvider } from "./authContext";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -13,7 +14,9 @@ const root = createRoot(container);
 root.render(
   <BrowserRouter>
     <UserProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </UserProvider>
   </BrowserRouter>
 );

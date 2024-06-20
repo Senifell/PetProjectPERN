@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import privateGamesDataServiceInstance from "../services/private-games.service";
+import PrivateGamesDataService from "../services/private-games.service";
 import ErrorComponent from "./error.component";
 
 import {
@@ -18,7 +18,6 @@ import { useUser } from "../userContext";
 
 function PrivateGames() {
   const { user } = useUser();
-  //   const navigate = useNavigate();
 
   const [privateGames, setPrivateGames] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -45,8 +44,7 @@ function PrivateGames() {
   };
 
   const getPrivateGames = useCallback(() => {
-    privateGamesDataServiceInstance
-      .getAll(user.id)
+    PrivateGamesDataService.getAll(user.id)
       .then((response) => {
         setPrivateGames(response.data);
       })
@@ -67,8 +65,7 @@ function PrivateGames() {
   };
 
   const handleUpdate = () => {
-    privateGamesDataServiceInstance
-      .update(newGame.id, newGame)
+    PrivateGamesDataService.update(newGame.id, newGame)
       .then(() => {
         getPrivateGames();
       })
@@ -78,8 +75,7 @@ function PrivateGames() {
   };
 
   const handleDelete = (id) => {
-    privateGamesDataServiceInstance
-      .delete(id)
+    PrivateGamesDataService.delete(id)
       .then(() => {
         setPrivateGames(privateGames.filter((game) => game.id !== id));
       })
@@ -114,8 +110,7 @@ function PrivateGames() {
   };
 
   const handleAdd = () => {
-    privateGamesDataServiceInstance
-      .create(newGame)
+    PrivateGamesDataService.create(newGame)
       .then(() => {
         getPrivateGames();
       })
@@ -129,8 +124,7 @@ function PrivateGames() {
   };
 
   const handleAddSteamButtonClick = () => {
-    privateGamesDataServiceInstance
-      .getSteamGames(user.id)
+    PrivateGamesDataService.getSteamGames(user.id)
       .then((response) => {
         setPrivateGames(response.data);
       })

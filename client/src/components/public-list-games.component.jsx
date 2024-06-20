@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ErrorComponent from "./error.component";
-import listGamesDataServiceInstance from "../services/list-games.service";
+import ListGamesDataService from "../services/list-games.service";
 
 function PublicListGames() {
   const [isLoading, setIsLoading] = useState(true);
@@ -8,8 +8,7 @@ function PublicListGames() {
   const [error, setError] = useState(null);
 
   const getPublicListGames = useCallback(() => {
-    listGamesDataServiceInstance
-      .getPublicListGames()
+    ListGamesDataService.getPublicListGames()
       .then((response) => {
         setListGames(response.data);
         setIsLoading(false);

@@ -1,73 +1,28 @@
-import https from "../https-common";
+import setupInterceptors from "../https-common";
 
-const fetchData = async (id, navigate) => {
-  const token = localStorage.getItem("token");
+const axiosInstance = setupInterceptors();
 
-  if (!token) {
-    navigate('/');  // Перенаправление на страницу входа
-    return Promise.reject(new Error("Token not found in localStorage."));
-  }
+const ListGamesDataService = {
+  getAll: (idUser) => {
+    const params = { idUser };
+    return axiosInstance.get(`/list-games/${idUser}`, { params });
+  },
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
+  getPublicListGames: () => {
+    return axiosInstance.get("/list-games");
+  },
 
-  // Выполнение GET-запроса с токеном
-  return https.get(`/list-games/${id}`, { headers });
+  create: (data) => {
+    return axiosInstance.post("/list-games", data);
+  },
+
+  update: (id, data) => {
+    return axiosInstance.put(`/list-games/${id}`, data);
+  },
+
+  deleteListGame: (id) => {
+    return axiosInstance.delete(`/list-games/${id}`);
+  },
 };
 
-class ListGamesDataService {
-  getAll(id, navigate) {
-    return fetchData(id, navigate);
-  }
-
-  getPublicListGames() {
-    return https.get("/list-games");
-  }
-
-  create(data) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.post("/list-games", data, { headers });
-  }
-
-  update(id, data) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.put(`/list-games/${id}`, data, { headers });
-  }
-
-  delete(id) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.delete(`/list-games/${id}`, { headers });
-  }
-}
-
-const listGamesDataServiceInstance = new ListGamesDataService();
-
-export default listGamesDataServiceInstance;
+export default ListGamesDataService;

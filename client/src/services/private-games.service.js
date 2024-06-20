@@ -1,83 +1,28 @@
-import https from "../https-common";
+import setupInterceptors from "../https-common";
 
-const fetchData = async (id, navigate) => {
-  const token = localStorage.getItem("token");
+const axiosInstance = setupInterceptors();
 
-  if (!token) {
-    navigate('/');  // Перенаправление на страницу входа
-    return Promise.reject(new Error("Token not found in localStorage."));
-  }
+const PrivateGamesDataService = {
+  getAll: (idUser) => {
+    const params = { idUser };
+    return axiosInstance.get(`/private-games/${idUser}`, { params });
+  },
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
+  getSteamGames: (id) => {
+    return axiosInstance.get(`/private-games/${id}/steam-game`);
+  },
 
-  // Выполнение GET-запроса с токеном
-  return https.get(`/private-games/${id}`, { headers });
+  create: (data) => {
+    return axiosInstance.post(`/private-games`, data);
+  },
+
+  update: (id, data) => {
+    return axiosInstance.put(`/private-games/${id}`, data);
+  },
+
+  deleteGame: (id) => {
+    return axiosInstance.delete(`/private-games/${id}`);
+  },
 };
 
-class PrivateGamesDataService {
-  getAll(id, navigate) {
-    return fetchData(id, navigate);
-  }
-
-  create(data) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.post("/private-games", data, { headers });
-  }
-
-  update(id, data) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.put(`/private-games/${id}`, data, { headers });
-  }
-
-  delete(id) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.delete(`/private-games/${id}`, { headers });
-  }
-
-  getSteamGames(id) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.get(`/private-games/${id}/steam-game`, { headers });
-  }
-}
-
-const privateGamesDataServiceInstance = new PrivateGamesDataService();
-
-export default privateGamesDataServiceInstance;
+export default PrivateGamesDataService;

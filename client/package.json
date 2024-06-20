@@ -16,7 +16,8 @@
     "react-router-dom": "^6.14.2",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4",
-    "webpack": "^4.28.3"
+    "webpack": "^4.28.3",
+    "zustand": "^4.5.2"
   },
   "scripts": {
     "start": "react-scripts start",

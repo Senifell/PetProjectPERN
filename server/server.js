@@ -2,6 +2,7 @@ const express = require("express");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 // const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
@@ -18,22 +19,14 @@ const options = {
 
 var corsOptions = {
   origin: "https://localhost:8081",
+  credentials: true,
 };
-
-// var allowedOrigins = ['https://localhost']; // Разрешенный список доменов
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   }
-// };
 
 app.use(cors(corsOptions));
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
@@ -67,9 +60,9 @@ db.sequelize
     console.error("Ошибка при создании таблицы Account:", error);
   });
 
-const job = schedule.scheduleJob("*/5 * * * *", async () =>
-  scheduleUpdateSteamGameInfo.doUpdate()
-);
+// const job = schedule.scheduleJob("*/5 * * * *", async () =>
+//   scheduleUpdateSteamGameInfo.doUpdate()
+// ); // Пока не нужно, надо переделать
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

@@ -53,9 +53,9 @@ async function updateInfoGameSteam(steamGame) {
         { logging: false }
       );
 
-      console.log(
-        `Обновлены данные игры id_app_steam=${steamGame.id_app_steam}.`
-      );
+      // console.log(
+      //   `Обновлены данные игры id_app_steam=${steamGame.id_app_steam}.`
+      // );
       return 1;
     } else if (gameData && !gameData.success) {
       await steamGame.update(
@@ -64,9 +64,9 @@ async function updateInfoGameSteam(steamGame) {
         },
         { logging: false }
       );
-      console.log(
-        `Обновлены данные игры id_app_steam=${steamGame.id_app_steam}. Игра не доступна.`
-      );
+      // console.log(
+      //   `Обновлены данные игры id_app_steam=${steamGame.id_app_steam}. Игра не доступна.`
+      // );
       return 1;
     } else {
       console.error(

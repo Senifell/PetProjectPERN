@@ -1,69 +1,22 @@
-import https from "../https-common";
+import setupInterceptors from "../https-common";
+const axiosInstance = setupInterceptors();
+const AccountDataService = {
+  get: (idUser) => {
+    const params = { idUser };
+    return axiosInstance.get(`/account/${idUser}`, { params });
+  },
 
-const fetchData = async (id, navigate) => {
-  const token = localStorage.getItem("token");
+  create: (data) => {
+    return axiosInstance.post("/account", data);
+  },
 
-  if (!token) {
-    navigate('/');  // Перенаправление на страницу входа
-    return Promise.reject(new Error("Token not found in localStorage."));
-  }
+  update: (idUser, data) => {
+    return axiosInstance.put(`/account/${idUser}`, data);
+  },
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
-
-  // Выполнение GET-запроса с токеном
-  return https.get(`/account/${id}`, { headers });
+  deleteAccount: (idUser) => {
+    return axiosInstance.delete(`/account/${idUser}`);
+  },
 };
 
-class AccountDataService {
-  get(id, navigate) {
-    return fetchData(id, navigate);
-  }
-
-  create(data) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.post("/account", data, { headers });
-  }
-
-  update(id, data) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.put(`/account/${id}`, data, { headers });
-  }
-
-  delete(id) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.delete(`/account/${id}`, { headers });
-  }
-}
-
-const accountDataServiceInstance = new AccountDataService();
-
-export default accountDataServiceInstance;
+export default AccountDataService;

@@ -25,8 +25,12 @@ class UserDataService {
     return https.delete(`/user`);
   }
 
-  signInUser(username, password) {
-    return https.post('/user/login', { username, password });
+  logInUser(username, password) {
+    return https.post("/user/auth/login", { username, password });
+  }
+
+  logOutUser() {
+    return https.post("/user/auth/logout", {});
   }
 }
 

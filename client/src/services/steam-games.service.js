@@ -1,88 +1,36 @@
-import https from "../https-common";
+import setupInterceptors from "../https-common";
 
-// Получение всех steam игр, обновление всех, обновление одной игры, просмотр подробной информации одной игры, удаление (?)
-class SteamGamesDataService {
-  // Получение всех игр (обновление если refresh: true)
-  getAll(
+const axiosInstance = setupInterceptors();
+
+const SteamGamesDataService = {
+  getAll: (
     idUser,
     page = 1,
     pageSize = 50,
     search = "",
     isFree = "all",
     isLanguage = "all"
-  ) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      return Promise.reject(new Error("Token not found in localStorage."));
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
+  ) => {
     const params = { page, pageSize, search, idUser, isFree, isLanguage };
-    return https.get(`/steam-games/${idUser}`, { headers, params });
-  }
+    return axiosInstance.get(`/steam-games/${idUser}`, { params });
+  },
 
-  getOne(id) {
-    const token = localStorage.getItem("token");
+  getOne: (id) => {
+    return axiosInstance.get(`/steam-games/get-app-info/${id}`);
+  },
 
-    if (!token) {
-      return Promise.reject(new Error("Token not found in localStorage."));
-    }
+  update: (id) => {
+    return axiosInstance.put(`/steam-games/${id}`);
+  },
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.get(`/steam-games/get-app-info/${id}`, { headers });
-  }
-
-  update(id) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.put(`/steam-games/${id}`, { headers });
-  }
-
-  updateAll(idUser, setting = "list-games") {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
+  updateAll: (idUser, setting = "list-games") => {
     const params = { setting, idUser };
+    return axiosInstance.put(`/steam-games/update`, { params });
+  },
 
-    return https.put(`/steam-games/update`, { headers, params });
-  }
+  deleteGame: (id) => {
+    return axiosInstance.delete(`/steam-games/${id}`);
+  },
+};
 
-  delete(id) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Token not found in localStorage.");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    return https.delete(`/steam-games/${id}`, { headers });
-  }
-}
-
-const steamGamesDataServiceInstance = new SteamGamesDataService();
-
-export default steamGamesDataServiceInstance;
+export default SteamGamesDataService;

@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import registrationImage from "./logo_registration.jpg";
 import "./RegistrationForm.css";
-import { useUser } from "../userContext";
+import { useAuth } from "../authContext";
 
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
     loginCodeError: null,
   });
 
-  const { updateUser } = useUser();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
 
   const messageStyles = {
@@ -61,74 +61,6 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
       return (
         username.trim() !== "" && email.trim() !== "" && password.trim() !== ""
       );
-    }
-  };
-
-  const handleLogin = async () => {
-    const userData = await checkUser();
-
-    // Вызываем updateUser для обновления контекста с данными пользователя.
-    updateUser({
-      id: userData.id,
-      name: userData.username,
-      email: userData.email,
-    });
-  };
-  const checkUser = async () => {
-    if (!checkDataNotEmpty()) {
-      console.log("Data isn't full");
-      return;
-    }
-
-    try {
-      const response = await customAuthenticateUser(username, password);
-
-      setFormData({
-        ...formData,
-        registered: false,
-        loggedIn: true,
-        loginCodeError: null,
-      });
-
-      //Добавим сохранение JWT-токен в localStorage
-      localStorage.setItem("token", response.token);
-
-      updateLoggedInStatus(true);
-      localStorage.setItem("loggedIn", "true"); //сохраним, чтобы можно было использовать после перезагрузки страницы
-
-      return response.user;
-    } catch (error) {
-      console.log(error);
-
-      updateLoggedInStatus(false);
-      setFormData({
-        ...formData,
-        loginCodeError:
-          error.response && error.response.status ? error.response.status : 500,
-      });
-      return null;
-    }
-  };
-
-  const customAuthenticateUser = async (username, password) => {
-    try {
-      const response = await fetch("https://localhost:8080/api/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Authentication failed"); // Обработка ошибки
-      }
-
-      const data = await response.json(); // Получаем данные о пользователе или токен
-
-      return data; // Возвращаем данные о пользователе или токен
-    } catch (error) {
-      throw error; // Прокидываем ошибку дальше для обработки в catch
     }
   };
 
@@ -184,46 +116,53 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
     });
   };
 
-  // const checkUser = () => {
-  //   if (!checkDataNotEmpty()) {
-  //     console.log("Data isn't full");
-  //     return;
-  //   }
+  const handleLogin = async () => {
+    if (!checkDataNotEmpty()) {
+      console.log("Data isn't full");
+      return;
+    }
 
-  //   UserDataServiceInstance.signInUser(username, password)
-  //     .then((response) => {
-  //       setFormData({
-  //         ...formData,
-  //         registered: false,
-  //         loggedIn: true,
-  //         loginCodeError: null,
-  //       });
-  //       console.log(response.data, response.data.message, response.status);
-  //       updateLoggedInStatus(true);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       updateLoggedInStatus(false);
-  //       setFormData({
-  //         ...formData,
-  //         loginCodeError:
-  //           error.response && error.response.status
-  //             ? error.response.status
-  //             : 500,
-  //       });
-  //     });
-  // };
+    try {
+      await login(username, password);
 
-  const handleLogout = () => {
-    setFormData({
-      ...formData,
-      loggedIn: false,
-      loginCodeError: null,
-    });
-    updateLoggedInStatus(false);
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("token");
-    navigate("/");
+      setFormData({
+        ...formData,
+        registered: false,
+        loggedIn: true,
+        loginCodeError: null,
+      });
+
+      updateLoggedInStatus(true);
+      localStorage.setItem("loggedIn", "true"); //сохраним, чтобы можно было использовать после перезагрузки страницы
+      // Думаю стоит изменить логику с loggedIn
+    } catch (err) {
+      console.log(err);
+
+      updateLoggedInStatus(false);
+      setFormData({
+        ...formData,
+        loginCodeError:
+          err.response && err.response.status ? err.response.status : 500,
+      });
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+
+      setFormData({
+        ...formData,
+        loggedIn: false,
+        loginCodeError: null,
+      });
+      updateLoggedInStatus(false);
+      localStorage.removeItem("loggedIn");
+
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   if (registered) {

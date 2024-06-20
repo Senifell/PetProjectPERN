@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import listGamesDataServiceInstance from "../services/list-games.service";
+import ListGamesDataService from "../services/list-games.service";
 import ListGamesBox from "./list-games-box.component";
 import AddListGamesBox from "./add-list-games-box.component";
 import ErrorComponent from "./error.component";
@@ -13,8 +13,7 @@ function ListGames() {
   const [error, setError] = useState(null);
 
   const getListGames = useCallback(() => {
-    listGamesDataServiceInstance
-      .getAll(user.id)
+    ListGamesDataService.getAll(user.id)
       .then((response) => {
         setListGames(response.data);
       })
@@ -28,8 +27,7 @@ function ListGames() {
   }, [getListGames]);
 
   const handleUpdate = (id, newData) => {
-    listGamesDataServiceInstance
-      .update(id, newData)
+    ListGamesDataService.update(id, newData)
       .then(() => {
         getListGames();
       })
@@ -39,8 +37,7 @@ function ListGames() {
   };
 
   const handleDelete = (id) => {
-    listGamesDataServiceInstance
-      .delete(id)
+    ListGamesDataService.deleteListGame(id)
       .then(() => {
         getListGames();
       })
@@ -50,8 +47,7 @@ function ListGames() {
   };
 
   const handleAdd = (newGame) => {
-    listGamesDataServiceInstance
-      .create(newGame)
+    ListGamesDataService.create(newGame)
       .then(() => {
         getListGames();
       })

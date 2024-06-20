@@ -13,12 +13,14 @@ import SteamGames from "./components/steam-games.component";
 import PublicListGames from "./components/public-list-games.component";
 
 import { useUser } from "./userContext";
+import { useAuth } from "./authContext";
 
 import NotFound from "./NotFound";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false); // Изначально пользователь не вошел
+  const [loggedIn, setLoggedIn] = useState(false);
   const { user } = useUser();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   // Задаем путь к картинке, которую вы хотите использовать в качестве фона
@@ -46,11 +48,10 @@ function App() {
     }
   }, []); // Пустой массив зависимостей гарантирует, что useEffect выполняется только один раз при загрузке
 
-  //!!! Надо отсюда убрать эту часть и свести к одной функции выхода
   const handleLogout = () => {
+    logout();
     setLoggedIn(false);
     localStorage.removeItem("loggedIn");
-    localStorage.removeItem("token");
     navigate("/");
   };
 

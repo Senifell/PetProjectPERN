@@ -1,16 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import steamGamesDataServiceInstance from "../services/steam-games.service";
+import SteamGamesDataService from "../services/steam-games.service";
 import ErrorComponent from "./error.component";
 
 import Pagination from "../Pagination";
 
-import {
-  FormGroup,
-  FormLabel,
-  FormControl,
-  Button,
-  Modal,
-} from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 
 import { useUser } from "../userContext";
 
@@ -46,10 +40,16 @@ function SteamGames() {
   const [isLanguage, setIsLanguage] = useState("all");
 
   const getSteamGames = useCallback(() => {
-    steamGamesDataServiceInstance
-      .getAll(user.id, currentPage, pageSize, searchTerm, isFree, isLanguage)
+    SteamGamesDataService.getAll(
+      user.id,
+      currentPage,
+      pageSize,
+      searchTerm,
+      isFree,
+      isLanguage
+    )
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         setSteamGames(
           response.data || {
             items: [],
@@ -69,8 +69,7 @@ function SteamGames() {
   }, [getSteamGames]);
 
   const handleUpdateAll = () => {
-    steamGamesDataServiceInstance
-      .updateAll(user.id, "list-games") // Обновить список игр из Стим
+    SteamGamesDataService.updateAll(user.id, "list-games") // Обновить список игр из Стим
       .then(() => {
         getSteamGames();
       })
@@ -80,8 +79,7 @@ function SteamGames() {
   };
 
   const handleUpdateAllInfo = () => {
-    steamGamesDataServiceInstance
-      .updateAll(user.id, "info") // обновить инфу по всем играм
+    SteamGamesDataService.updateAll(user.id, "info") // обновить инфу по всем играм
       .then(() => {
         getSteamGames();
       })
@@ -96,13 +94,10 @@ function SteamGames() {
   };
 
   const handleUpdateData = (id) => {
-    console.log(id);
-    steamGamesDataServiceInstance
-      .update(id)
+    SteamGamesDataService.update(id)
       .then(() => {
         getSteamGames();
-        steamGamesDataServiceInstance
-          .getOne(id)
+        SteamGamesDataService.getOne(id)
           .then((response) => {
             setNewGame(response.data);
           })
@@ -160,7 +155,7 @@ function SteamGames() {
         />
       </FormGroup> */}
       <div>
-        <label for="isFree">Статус:</label>
+        <label htmlFor="isFree">Статус:</label>
         <select
           name="isFree"
           id="isFree"
@@ -173,7 +168,7 @@ function SteamGames() {
         </select>
       </div>
       <div>
-        <label for="language">Поддерживает язык:</label>
+        <label htmlFor="language">Поддерживает язык:</label>
         <select
           name="language"
           id="language"
@@ -186,7 +181,7 @@ function SteamGames() {
         </select>
       </div>
       <div>
-        <label for="searchTerm">Поиск по имени</label>
+        <label htmlFor="searchTerm">Поиск по имени</label>
         <input
           type="search"
           id="searchTerm"

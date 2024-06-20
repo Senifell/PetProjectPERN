@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import accountDataServiceInstance from "../services/account.service";
+import AccountDataService from "../services/account.service";
 import { withRouter } from "../common/with-router";
 import { useUser } from "../userContext";
-import { useNavigate } from "react-router-dom";
 import ErrorComponent from "./error.component";
 
 function Account(props) {
   const { user } = useUser();
-  const navigate = useNavigate();
 
   const [currentAccount, setCurrentAccount] = useState({
     id: null,
@@ -32,40 +30,33 @@ function Account(props) {
     }));
   };
 
-  const getAccount = useCallback(
-    (id) => {
-      accountDataServiceInstance
-        .get(id, navigate)
-        .then((response) => {
-          setCurrentAccount(response.data);
-        })
-        .catch((e) => {
-          setError(e.message || "Что-то пошло не так");
-        });
-    },
-    [navigate]
-  );
+  const getAccount = useCallback((id) => {
+    AccountDataService.get(id)
+      .then((response) => {
+        setCurrentAccount(response.data);
+      })
+      .catch((e) => {
+        setError(e.message || "Что-то пошло не так");
+      });
+  }, []);
 
   const updateAccount = () => {
-    accountDataServiceInstance
-      .update(currentAccount.id_user, currentAccount)
+    AccountDataService.update(currentAccount.id_user, currentAccount)
       .then((response) => {
         setMessage("Данные аккаунта были успешно обновлены!");
       })
       .catch((e) => {
-        console.log(e); //!!!
+        setError(e.message || "Ошибка обновления данных аккаунта!");
       });
   };
 
   const deleteAccount = () => {
-    accountDataServiceInstance
-      .delete(currentAccount.id_user)
-      .then((response) => {
-        console.log(response.data); //!!!
+    AccountDataService.deleteAccount(currentAccount.id_user)
+      .then(() => {
         props.router.navigate("/");
       })
       .catch((e) => {
-        console.log(e); //!!!
+        setError(e.message || "Ошибка удаления аккаунта!");
       });
   };
 
@@ -91,7 +82,7 @@ function Account(props) {
                 id="name"
                 placeholder="Name"
                 name="name"
-                value={currentAccount.name}
+                value={currentAccount.name || ""}
                 onChange={onChange}
               />
             </div>
@@ -103,7 +94,7 @@ function Account(props) {
                 className="form-control"
                 id="surname"
                 name="surname"
-                value={currentAccount.surname}
+                value={currentAccount.surname || ""}
                 onChange={onChange}
               />
             </div>
@@ -116,7 +107,7 @@ function Account(props) {
                 id="steam_id"
                 placeholder="Steam ID"
                 name="steam_id"
-                value={currentAccount.steam_id}
+                value={currentAccount.steam_id || ""}
                 onChange={onChange}
               />
             </div>
@@ -168,7 +159,7 @@ function Account(props) {
                 id="description"
                 placeholder="Дополнительная информация"
                 name="description"
-                value={currentAccount.description}
+                value={currentAccount.description || ""}
                 onChange={onChange}
               />
             </div>

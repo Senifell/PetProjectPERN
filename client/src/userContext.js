@@ -1,11 +1,10 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({ id: null, name: '', email: '' });
+  const [user, setUser] = useState({ id: null, username: "", email: "" });
 
-  // Функция для обновления данных пользователя
   const updateUser = (newUserData) => {
     setUser(newUserData);
   };
