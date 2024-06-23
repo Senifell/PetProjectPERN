@@ -62,11 +62,11 @@ function ListGames() {
 
   return (
     <div className="list-games-container">
-      {listGames.map((game) => (
+      {listGames.map((list) => (
         <ListGamesBox
-          key={game.id}
-          game={game}
-          onUpdate={handleUpdate}
+          key={list.id}
+          list={list}
+          onUpdateList={handleUpdate}
           onDelete={handleDelete}
         />
       ))}

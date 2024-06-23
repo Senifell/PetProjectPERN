@@ -2,34 +2,38 @@ import React, { useState } from "react";
 
 function AddListGamesBox({ onAdd, id_user }) {
   const [showForm, setShowForm] = useState(false);
-  const [newGame, setNewGame] = useState({
+  const [newListGames, setNewListGames] = useState({
     name: "",
     description: "",
     b_private: true,
     id_user: id_user,
   });
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewGame((prevGame) => ({
+    setNewListGames((prevGame) => ({
       ...prevGame,
-      [name]: name === "b_private" ? value === "true" : value
+      [name]: name === "b_private" ? value === "true" : value,
     }));
   };
-  
+
   const handleRadioChange = (e) => {
     const { value } = e.target;
-    setNewGame((prevGame) => ({
-      ...prevGame,
+    setNewListGames((prevListGames) => ({
+      ...prevListGames,
       b_private: value === "true",
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd(newGame);
-    setNewGame({ name: "", description: "", b_private: true, id_user: id_user });
+    onAdd(newListGames);
+    setNewListGames({
+      name: "",
+      description: "",
+      b_private: true,
+      id_user: id_user,
+    });
     setShowForm(false);
   };
 
@@ -45,7 +49,7 @@ function AddListGamesBox({ onAdd, id_user }) {
               id="name"
               placeholder="Name"
               name="name"
-              value={newGame.name}
+              value={newListGames.name}
               onChange={handleChange}
               required
             />
@@ -58,38 +62,38 @@ function AddListGamesBox({ onAdd, id_user }) {
               id="description"
               placeholder="Description"
               name="description"
-              value={newGame.description}
+              value={newListGames.description}
               onChange={handleChange}
             />
           </div>
 
           <div className="form-group">
-          <label>Доступность</label>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="b_private"
-                value="true"
-                checked={newGame.b_private === true}
-                onChange={handleRadioChange}
-              />
-              Личное
-            </label>
+            <label>Доступность</label>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="b_private"
+                  value="true"
+                  checked={newListGames.b_private === true}
+                  onChange={handleRadioChange}
+                />
+                Личное
+              </label>
+            </div>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="b_private"
+                  value="false"
+                  checked={newListGames.b_private === false}
+                  onChange={handleRadioChange}
+                />
+                Доступно для всех
+              </label>
+            </div>
           </div>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="b_private"
-                value="false"
-                checked={newGame.b_private === false}
-                onChange={handleRadioChange}
-              />
-              Доступно для всех
-            </label>
-          </div>
-        </div>
 
           <button type="submit" className="btn btn-primary">
             Submit

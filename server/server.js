@@ -48,6 +48,7 @@ require("./app/routes/account.routes")(app);
 require("./app/routes/list-games.routes")(app);
 require("./app/routes/private-games.routes")(app);
 require("./app/routes/steam-games.routes")(app);
+require("./app/routes/collection-games.routes")(app);
 
 db.sequelize
   .sync({ force: false })
@@ -60,9 +61,9 @@ db.sequelize
     console.error("Ошибка при создании таблицы Account:", error);
   });
 
-// const job = schedule.scheduleJob("*/5 * * * *", async () =>
-//   scheduleUpdateSteamGameInfo.doUpdate()
-// ); // Пока не нужно, надо переделать
+const job = schedule.scheduleJob("*/5 * * * *", async () =>
+  scheduleUpdateSteamGameInfo.doUpdate()
+); // Пока не нужно, надо переделать
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

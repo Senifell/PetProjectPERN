@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize, SteamGames) => {
       },
       id_app_steam: {
         type: Sequelize.INTEGER,
-        allowNull: true, // Разрешить значение null
+        allowNull: true,
         references: {
           model: SteamGames,
           key: "id_app_steam",
