@@ -49,7 +49,6 @@ function SteamGames() {
       isLanguage
     )
       .then((response) => {
-        console.log(response);
         setSteamGames(
           response.data || {
             items: [],

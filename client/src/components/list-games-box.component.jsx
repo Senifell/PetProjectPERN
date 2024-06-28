@@ -5,7 +5,11 @@ import ErrorComponent from "./error.component";
 import { useUser } from "../userContext";
 import PrivateGamesDataService from "../services/private-games.service";
 
+import { useNavigate } from "react-router-dom";
+
 function ListGamesBox({ list, onUpdateList, onDelete }) {
+  const navigate = useNavigate();
+
   const { user } = useUser();
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -72,8 +76,6 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
         )
         .map((game) => game.id_game);
 
-      // console.log("newGamesToAdd:", newGamesToAdd);
-
       CollectionGamesData.addGamesToCollection(list.id, user.id, newGamesToAdd)
         .then((response) => {
           getCollectionGames();
@@ -89,8 +91,6 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
           (oldGame) => !games.some((game) => game.id_game === oldGame.id_game)
         )
         .map((game) => game.id_game);
-
-      // console.log("deletedGames:", deletedGames);
 
       if (deletedGames.length > 0) {
         CollectionGamesData.deleteGamesFromCollection(
@@ -114,7 +114,6 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
   };
 
   const handleDelete = () => {
-    // Вызываем onDelete с id
     onDelete(list.id);
   };
 
@@ -139,13 +138,30 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
     setShowAllGames(!showAllGames);
   };
 
+  const handleSpinClick = () => {
+    navigate(`/list-games/fortune-wheel/${list.id}`);
+  };
+
   if (error) {
     return <ErrorComponent message={error} />;
   }
 
   return (
     <div className="list-games-box">
-      <h3>{list.name}</h3>
+      <div className="list-header">
+        <h3>{list.name}</h3>
+        {games.length > 1 && (
+          <div className="spin-wheel-container">
+            <img
+              src="/images/spin_wheel.png"
+              alt="Spin Wheel"
+              className="button-spin-wheel"
+              onClick={handleSpinClick}
+            />
+            <span className="tooltip-text">Крутить!</span>
+          </div>
+        )}
+      </div>
       <p>{list.description}</p>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {games.length > 0
@@ -168,12 +184,20 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
           </button>
         )}
       </div>
-      <button className="btn btn-primary" onClick={handleEdit}>
-        Редактировать
-      </button>
-      <button className="btn btn-danger" onClick={handleDelete}>
-        Удалить
-      </button>
+      <div className="button-container">
+        <button
+          className="btn btn-outline-primary custom-button"
+          onClick={handleEdit}
+        >
+          Редактировать
+        </button>
+        <button
+          className="btn btn-outline-danger custom-button"
+          onClick={handleDelete}
+        >
+          Удалить
+        </button>
+      </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
@@ -183,12 +207,12 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
         </Modal.Header>
         <Modal.Body>
           <div className="form-group">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Название коллекции</label>
             <input
               type="text"
               className="form-control"
               id="name"
-              placeholder="Name"
+              placeholder="Название"
               name="name"
               value={listGames.name}
               onChange={handleChange}
@@ -197,11 +221,11 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">Описание</label>
             <textarea
               className="form-control"
               id="description"
-              placeholder="Description"
+              placeholder="Описание"
               name="description"
               value={listGames.description}
               onChange={handleChange}
@@ -219,7 +243,7 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
                   checked={listGames.b_private === true}
                   onChange={handleRadioChange}
                 />
-                Личное
+                Личная коллекция
               </label>
             </div>
             <div>
@@ -231,7 +255,7 @@ function ListGamesBox({ list, onUpdateList, onDelete }) {
                   checked={listGames.b_private === false}
                   onChange={handleRadioChange}
                 />
-                Доступно для всех
+                Публичная коллекция
               </label>
             </div>
           </div>

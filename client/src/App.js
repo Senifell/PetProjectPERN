@@ -12,6 +12,9 @@ import SteamGames from "./components/steam-games.component";
 
 import PublicListGames from "./components/public-list-games.component";
 
+import BoxListGames from "./components/list-games-box.component";
+import FortuneWheelPage from "./components/fortune-wheel.component";
+
 import { useUser } from "./userContext";
 import { useAuth } from "./authContext";
 
@@ -23,30 +26,27 @@ function App() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  // Задаем путь к картинке, которую вы хотите использовать в качестве фона
-  //const imagePath = process.env.PUBLIC_URL + "/background.jpg";
-
-  // Устанавливаем картинку в качестве фона только для элемента с классом "container"
   const appStyles = {
-    backgroundColor: "#1A1A1D", //C5C6C7 1F2833
-    //backgroundImage: `url('${imagePath}')`,
-    height: "100vh",
+    backgroundImage: `url('/images/background-img.jpg')`,
+    backgroundSize: "cover", // Растягиваем или сжимаем изображение, чтобы оно полностью заполняло контейнер
+    backgroundPosition: "top", // Центрируем изображение по горизонтали и вертикали
+    backgroundRepeat: "no-repeat",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
   };
 
   const updateLoggedInStatus = (status) => {
-    console.log("Переданное значение: ", status);
     setLoggedIn(status);
   };
 
   useEffect(() => {
-    // Получение значения из локального хранилища при загрузке приложения
     const storedLoggedIn = localStorage.getItem("loggedIn");
 
-    // Если в локальном хранилище есть значение, установите его в состояние
     if (storedLoggedIn) {
       setLoggedIn(true);
     }
-  }, []); // Пустой массив зависимостей гарантирует, что useEffect выполняется только один раз при загрузке
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -119,12 +119,12 @@ function App() {
       <div
         className="container mt-3"
         style={{
-          backgroundColor: "white", //C5C6C7  1F2833
+          backgroundColor: "#dcf1fc",
           padding: "20px",
+          marginBottom: "20px",
           maxWidth: "80%",
-          // 66FCF1 45A29E
-          border: "5px solid #6F2232",
-          borderRadius: "5px", // #1A1A1D, #4E4E50, #6F2232, #950740, #C3073F
+          border: "none",
+          borderRadius: "10px",
         }}
       >
         <Routes>
@@ -134,6 +134,12 @@ function App() {
           <Route path="/list-games/:userId" element={<ListGames />} />
           <Route path="/private-games/:userId" element={<PrivateGames />} />
           <Route path="/steam-games/:userId" element={<SteamGames />} />
+
+          <Route path="/list-games/:userId" element={<BoxListGames />} />
+          <Route
+            path="/list-games/fortune-wheel/:id"
+            element={<FortuneWheelPage />}
+          />
 
           <Route
             path="/user"

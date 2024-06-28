@@ -61,16 +61,35 @@ function ListGames() {
   }
 
   return (
-    <div className="list-games-container">
-      {listGames.map((list) => (
-        <ListGamesBox
-          key={list.id}
-          list={list}
-          onUpdateList={handleUpdate}
-          onDelete={handleDelete}
+    <div>
+      <h2>Пользовательские коллекции игр</h2>
+      <div>
+        Нажмите "редактировать", чтобы изменить описание коллекции и доступный
+        список игр. Публичные коллекции доступны всем пользователям сайта,
+        личные коллекции видите только Вы.
+      </div>
+      <div>
+        Нажмите на значок{" "}
+        <img
+          src="/images/spin_wheel.png"
+          alt="Spin Wheel"
+          className="button-spin-wheel"
         />
-      ))}
-      <AddListGamesBox onAdd={handleAdd} id_user={user.id} />
+        , чтобы открыть Колесо Фортуны выбранной коллекции! Опция доступна
+        только для коллекций с двумя и более играми. (:
+      </div>
+      <br />
+      <div className="list-games-container">
+        {listGames.map((list) => (
+          <ListGamesBox
+            key={list.id}
+            list={list}
+            onUpdateList={handleUpdate}
+            onDelete={handleDelete}
+          />
+        ))}
+        <AddListGamesBox onAdd={handleAdd} id_user={user.id} />
+      </div>
     </div>
   );
 }

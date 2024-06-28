@@ -42,12 +42,12 @@ function AddListGamesBox({ onAdd, id_user }) {
       {showForm ? (
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Название коллекции</label>
             <input
               type="text"
               className="form-control"
               id="name"
-              placeholder="Name"
+              placeholder="Название"
               name="name"
               value={newListGames.name}
               onChange={handleChange}
@@ -56,11 +56,11 @@ function AddListGamesBox({ onAdd, id_user }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">Описание</label>
             <textarea
               className="form-control"
               id="description"
-              placeholder="Description"
+              placeholder="Описание"
               name="description"
               value={newListGames.description}
               onChange={handleChange}
@@ -78,7 +78,7 @@ function AddListGamesBox({ onAdd, id_user }) {
                   checked={newListGames.b_private === true}
                   onChange={handleRadioChange}
                 />
-                Личное
+                Личная коллекция
               </label>
             </div>
             <div>
@@ -90,13 +90,13 @@ function AddListGamesBox({ onAdd, id_user }) {
                   checked={newListGames.b_private === false}
                   onChange={handleRadioChange}
                 />
-                Доступно для всех
+                Публичная коллекция
               </label>
             </div>
           </div>
 
           <button type="submit" className="btn btn-primary">
-            Submit
+            Создать
           </button>
         </form>
       ) : (
