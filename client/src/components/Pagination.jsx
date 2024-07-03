@@ -1,5 +1,5 @@
 import React from "react";
-import { usePagination, DOTS } from "./usePagination";
+import { usePagination, DOTS } from "../hooks/usePagination";
 const Pagination = (props) => {
   const {
     onPageChange,

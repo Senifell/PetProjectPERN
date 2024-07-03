@@ -1,7 +1,7 @@
 // src/contexts/authContext.js
 import React, { createContext, useContext, useEffect } from "react";
 import useAuthStore from "./store/authStore";
-import setupInterceptors from "./https-common";
+import { setupInterceptors } from "./https-common";
 import { useUser } from "./userContext";
 
 const AuthContext = createContext();

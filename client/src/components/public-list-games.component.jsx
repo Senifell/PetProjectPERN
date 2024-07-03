@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ErrorComponent from "./error.component";
 import ListGamesDataService from "../services/list-games.service";
+import ListGamesBox from "./list-games-box.component";
 
 function PublicListGames() {
   const [isLoading, setIsLoading] = useState(true);
@@ -38,12 +39,10 @@ function PublicListGames() {
         Представленные публичные коллекции были созданы пользователями сайта
       </div>
       <br />
+
       <div className="list-games-container">
-        {listGames.map((game) => (
-          <div className="list-games-box" key={game.id}>
-            <h3>{game.name}</h3>
-            <p>{game.description}</p>
-          </div>
+        {listGames.map((list) => (
+          <ListGamesBox key={list.id} list={list} privateMode={false} />
         ))}
       </div>
     </div>

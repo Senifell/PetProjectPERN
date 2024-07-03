@@ -1,4 +1,5 @@
-import setupInterceptors from "../https-common";
+import { setupInterceptors } from "../https-common";
+
 const axiosInstance = setupInterceptors();
 const AccountDataService = {
   get: (idUser) => {

@@ -1,6 +1,13 @@
 import axios from "axios";
 import useAuthStore from "./store/authStore";
 
+const https_public = axios.create({
+  baseURL: "https://localhost:8080/api",
+  headers: {
+    "Content-type": "application/json",
+  },
+});
+
 const https = axios.create({
   baseURL: "https://localhost:8080/api",
   headers: {
@@ -46,4 +53,4 @@ const setupInterceptors = () => {
   return https;
 };
 
-export default setupInterceptors;
+export { setupInterceptors, https, https_public };

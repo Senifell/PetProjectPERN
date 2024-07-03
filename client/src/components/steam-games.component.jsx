@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
 import SteamGamesDataService from "../services/steam-games.service";
+import PrivateGamesDataService from "../services/private-games.service";
 import ErrorComponent from "./error.component";
 
-import Pagination from "../Pagination";
-
-import { Button, Modal } from "react-bootstrap";
+import Pagination from "./Pagination";
 
 import { useUser } from "../userContext";
 
+import SteamGameModal from "./steam-games-modal.component";
+import SteamGamesTable from "./steam-games-table.component";
+
+import { toast } from "react-toastify";
+
 function SteamGames() {
   const { user } = useUser();
+  const mode = false; //Изменить после добавления ролей
 
   const [steamGames, setSteamGames] = useState({
     items: [],
@@ -19,6 +24,8 @@ function SteamGames() {
   });
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
+
+  const [sortBy, setSortBy] = useState("nameAsc");
 
   const [newGame, setNewGame] = useState({
     id_app_steam: null,
@@ -37,7 +44,7 @@ function SteamGames() {
   const [pageSize] = useState(50);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFree, setIsFree] = useState("all");
-  const [isLanguage, setIsLanguage] = useState("all");
+  const [hasLanguage, setHasLanguage] = useState("all");
 
   const getSteamGames = useCallback(() => {
     SteamGamesDataService.getAll(
@@ -46,7 +53,8 @@ function SteamGames() {
       pageSize,
       searchTerm,
       isFree,
-      isLanguage
+      hasLanguage,
+      sortBy
     )
       .then((response) => {
         setSteamGames(
@@ -61,7 +69,7 @@ function SteamGames() {
       .catch((e) => {
         setError(e.message || "Что-то пошло не так");
       });
-  }, [user.id, currentPage, pageSize, searchTerm, isFree, isLanguage]);
+  }, [user.id, currentPage, pageSize, searchTerm, isFree, hasLanguage, sortBy]);
 
   useEffect(() => {
     getSteamGames();
@@ -69,7 +77,7 @@ function SteamGames() {
 
   const handleUpdateAll = () => {
     SteamGamesDataService.updateAll(user.id, "list-games") // Обновить список игр из Стим
-      .then(() => {
+      .then((response) => {
         getSteamGames();
       })
       .catch((e) => {
@@ -77,15 +85,15 @@ function SteamGames() {
       });
   };
 
-  const handleUpdateAllInfo = () => {
-    SteamGamesDataService.updateAll(user.id, "info") // обновить инфу по всем играм
-      .then(() => {
-        getSteamGames();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  // const handleUpdateAllInfo = () => {
+  //   SteamGamesDataService.updateAll(user.id, "info") // обновить инфу по всем играм
+  //     .then(() => {
+  //       getSteamGames();
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // };
 
   const handleMoreData = (game) => {
     setNewGame(game);
@@ -110,7 +118,9 @@ function SteamGames() {
   };
 
   const handleDelete = (id) => {
-    alert("Недоступно!");
+    toast(`Функция удаления недоступна в текущий момент.`, {
+      theme: "dark",
+    });
   };
 
   const handleSearch = (e) => {
@@ -123,9 +133,33 @@ function SteamGames() {
     setCurrentPage(1);
   };
 
-  const handleIsLanguageChange = (e) => {
-    setIsLanguage(e.target.value);
+  const handleHasLanguageChange = (e) => {
+    setHasLanguage(e.target.value);
     setCurrentPage(1);
+  };
+
+  const handleSort = (e) => {
+    setSortBy(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleAddToPrivateGame = (game) => {
+    PrivateGamesDataService.create(user.id, {
+      id_app_steam: game.id_app_steam,
+      id_user: user.id,
+    })
+      .then(() => {
+        toast(`Игра ${game.name} успешно добавлена в список личных игр.`, {
+          theme: "dark",
+        });
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 409) {
+          toast.error("Игра уже существует в вашем списке.");
+        } else {
+          toast.error("Произошла ошибка при добавлении игры.");
+        }
+      });
   };
 
   if (error) {
@@ -134,169 +168,48 @@ function SteamGames() {
 
   return (
     <div className="container">
-      <h2 className="bg-beige p-3">Список игр</h2>
-      <button className="btn btn-primary" onClick={handleUpdateAll}>
-        Обновить
-      </button>
-      <span> </span>
+      <div className="d-flex align-items-center justify-content-center">
+        <h2 className="header-2 text-center flex-grow-1">Список игр Steam</h2>
+        {!mode && (
+          <div className="justify-content-end">
+            <button
+              className="btn btn-outline-primary"
+              onClick={handleUpdateAll}
+            >
+              Обновить &#8634;
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* <span> </span>
       <button className="btn btn-secondary" onClick={handleUpdateAllInfo}>
         Обновить данные по всем играм
-      </button>
+      </button> */}
+      <SteamGamesTable
+        steamGames={steamGames.items}
+        isFree={isFree}
+        hasLanguage={hasLanguage}
+        searchGameByName={searchTerm}
+        sortBy={sortBy}
+        handleIsFreeChange={handleIsFreeChange}
+        handleHasLanguageChange={handleHasLanguageChange}
+        handleSearch={handleSearch}
+        handleDelete={handleDelete}
+        handleUpdateData={handleUpdateData}
+        handleMoreData={handleMoreData}
+        handleAddToPrivateGame={handleAddToPrivateGame}
+        handleSort={handleSort}
+      />
 
-      {/* <FormGroup>
-        <FormLabel>Поиск по имени</FormLabel>
-        <FormControl
-          type="search"
-          class="form-control rounded"
-          placeholder="Введите имя игры"
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-      </FormGroup> */}
       <div>
-        <label htmlFor="isFree">Статус:</label>
-        <select
-          name="isFree"
-          id="isFree"
-          value={isFree}
-          onChange={handleIsFreeChange}
-        >
-          <option value="all">Все</option>
-          <option value="free">Бесплатные</option>
-          <option value="no_free">Платные</option>
-        </select>
-      </div>
-      <div>
-        <label htmlFor="language">Поддерживает язык:</label>
-        <select
-          name="language"
-          id="language"
-          value={isLanguage}
-          onChange={handleIsLanguageChange}
-        >
-          <option value="all">Все</option>
-          <option value="rus">Русский</option>
-          <option value="en">Английский</option>
-        </select>
-      </div>
-      <div>
-        <label htmlFor="searchTerm">Поиск по имени</label>
-        <input
-          type="search"
-          id="searchTerm"
-          className="form-control rounded"
-          placeholder="Введите имя игры"
-          value={searchTerm}
-          onChange={handleSearch}
+        <SteamGameModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          steamGame={newGame}
+          handleUpdateData={handleUpdateData}
         />
       </div>
-
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Об игре</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div>
-            <span>Название: {newGame.name}</span>
-          </div>
-          <div>
-            <span>Статус: {!newGame.is_free ? "Платная" : "Бесплатная"}</span>
-          </div>
-          <div>
-            <span>Возраст: {newGame.required_age}+</span>
-          </div>
-          <div>
-            <span>Поддерживаемые языки: {newGame.supported_languages}</span>
-          </div>
-          <div>
-            <span>Жанры: {newGame.genres}</span>
-          </div>
-          <div>
-            <span>Категории: {newGame.categories}</span>
-          </div>
-          <div>
-            <span>Краткое описание: {newGame.short_description}</span>
-          </div>
-          <div>
-            <span>Дата релиза: {newGame.release_date}</span>
-          </div>
-          <div>
-            <span>Рекомендации: {newGame.n_recommendation}</span>
-          </div>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Закрыть
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => handleUpdateData(newGame.id)}
-          >
-            Обновить
-          </Button>
-        </Modal.Body>
-        <Modal.Footer></Modal.Footer>
-      </Modal>
-
-      <table className="table">
-        <thead className="bg-beige">
-          <tr>
-            <th scope="col">Название</th>
-            <th scope="col">Описание</th>
-            <th scope="col">Статус</th>
-            <th scope="col">Жанры</th>
-            <th scope="col">Рекомендации</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(steamGames.items) && steamGames.items.length > 0 ? (
-            steamGames.items.map((game) => (
-              <tr key={game.id}>
-                <td>{game.name}</td>
-                <td>{game.short_description}</td>
-                <td>
-                  {game.is_free === true
-                    ? "Бесплатная"
-                    : game.is_free === false
-                    ? "Платная"
-                    : "Не указано"}
-                </td>
-                <td>{game.genres}</td>
-                <td>{game.n_recommendation}</td>
-                <td>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => handleUpdateData(game.id)}
-                  >
-                    Обновить данные
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleMoreData(game)}
-                  >
-                    Подробнее
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDelete(game.id)}
-                  >
-                    Удалить &#128465;
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8">Нет данных для отображения</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
 
       <Pagination
         className="pagination-bar"

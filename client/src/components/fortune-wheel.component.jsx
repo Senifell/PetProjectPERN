@@ -41,7 +41,7 @@ function FortuneWheelPage() {
   ];
 
   const getCollectionGames = useCallback(() => {
-    CollectionGamesData.getAll(id, user.id)
+    CollectionGamesData.getAllPublic(id, user.id)
       .then((response) => {
         setGames(response.data);
         setError(null);

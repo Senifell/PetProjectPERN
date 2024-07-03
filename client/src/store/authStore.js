@@ -30,7 +30,6 @@ const useAuthStore = create((set) => ({
 
       return { accessToken: newAccessToken, userData: userData };
     } catch (error) {
-      console.error("Error refreshing token:", error);
       throw error;
     }
   },

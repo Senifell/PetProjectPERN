@@ -11,7 +11,7 @@ module.exports = (app) => {
 
   // Update all list games (setting = 'list-games') or update info about all games (setting = 'info')
   // Mb only 'game' app or 'game' and 'dlc' app?
-  router.put("/update", steamGames.updateAll); // Почему здесь authenticateToken не работает?
+  router.put("/update", authenticateToken, steamGames.updateAll);
 
   // Update a list of games with id
   router.put("/:id", steamGames.update);

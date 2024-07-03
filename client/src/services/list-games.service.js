@@ -1,4 +1,4 @@
-import setupInterceptors from "../https-common";
+import { https_public, setupInterceptors } from "../https-common";
 
 const axiosInstance = setupInterceptors();
 
@@ -9,7 +9,7 @@ const ListGamesDataService = {
   },
 
   getPublicListGames: () => {
-    return axiosInstance.get("/list-games");
+    return https_public.get("/list-games");
   },
 
   create: (data) => {

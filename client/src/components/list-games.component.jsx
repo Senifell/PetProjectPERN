@@ -86,6 +86,7 @@ function ListGames() {
             list={list}
             onUpdateList={handleUpdate}
             onDelete={handleDelete}
+            privateMode={true}
           />
         ))}
         <AddListGamesBox onAdd={handleAdd} id_user={user.id} />

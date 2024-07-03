@@ -1,0 +1,59 @@
+.table-container {
+    overflow-x: auto;
+    padding-top: 10px;
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #88afeb;
+    font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.col-title {
+    width: 20%;
+}
+
+.col-min-players,
+.col-max-players,
+.col-playtime {
+    width: 7%;
+    text-align: center;
+}
+
+.col-description {
+    width: 40%;
+}
+
+.col-action {
+    width: 10%;
+    text-align: center;
+}
+
+.description {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}

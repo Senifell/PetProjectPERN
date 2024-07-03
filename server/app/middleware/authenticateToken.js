@@ -9,7 +9,8 @@ const authenticateToken = async (req, res, next) => {
     try {
       req.user = jwt.verify(accessToken, process.env.GWT_ACCESS_TOKEN_KEY);
       const userIdFromToken = req.user.userId;
-      const userIdFromRequest = req.query.idUser || req.params.idUser;
+      const userIdFromRequest =
+        req.query.idUser || req.params.idUser || req.body.params.idUser;
       console.log(req.user, userIdFromToken, userIdFromRequest);
       if (userIdFromToken != userIdFromRequest) {
         return res

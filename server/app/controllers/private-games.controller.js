@@ -13,6 +13,7 @@ exports.create = (req, res) => {
     });
     return;
   }
+
   const privateGames = {
     name: req.body.name,
     id_user: req.body.id_user,
@@ -25,15 +26,51 @@ exports.create = (req, res) => {
     b_deleted: 0,
   };
 
-  PrivateGames.create(privateGames)
-    .then((data) => {
-      res.send(data);
+  if (privateGames.id_app_steam) {
+    PrivateGames.findOne({
+      where: {
+        id_app_steam: privateGames.id_app_steam,
+        id_user: req.body.id_user,
+        b_deleted: false,
+      },
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the game.",
+      .then((data) => {
+        if (data) {
+          res.status(409).send({
+            message: "Игра уже добавлена в личный список!",
+          });
+          return;
+        } else {
+          PrivateGames.create(privateGames)
+            .then((data) => {
+              res.send(data);
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message:
+                  err.message || "Some error occurred while creating the game.",
+              });
+            });
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while checking the game.",
+        });
       });
-    });
+  } else {
+    PrivateGames.create(privateGames)
+      .then((data) => {
+        res.send(data);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while creating the game.",
+        });
+      });
+  }
 };
 
 exports.findOne = (req, res) => {
@@ -55,29 +92,50 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.findAll = (req, res) => {
-  const id = req.params.id;
+exports.findAll = async (req, res) => {
+  const { idUser, page = 1, pageSize = 50 } = req.query;
+  const offset = (page - 1) * pageSize;
 
-  sequelize
-    .query(
-      `SELECT p.id, COALESCE(NULLIF(p.name, ''), s.name) AS name, COALESCE(NULLIF(p.description, ''), s.short_description) AS description, 
-              p.min_player, p.max_player, ROUND(p.n_playtime / 60::numeric, 1) AS n_playtime FROM private_games p 
-    LEFT JOIN steam_games s ON s.id_app_steam = p.id_app_steam AND s.b_deleted = false
-    WHERE p.id_user = :id_user AND p.b_deleted = false
-    ORDER BY COALESCE(NULLIF(p.name, ''), s.name)`,
+  try {
+    const countResult = await sequelize.query(
+      `SELECT COUNT(p.id) AS count FROM private_games p 
+    WHERE p.id_user = :id_user AND p.b_deleted = false`,
+
       {
-        replacements: { id_user: id },
+        replacements: { id_user: idUser },
         type: sequelize.QueryTypes.SELECT,
       }
-    )
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((error) => {
-      res.status(500).send({
-        message: error.message || "Some error occurred while retrieving game.",
-      });
+    );
+
+    const rows = await sequelize.query(
+      `SELECT p.id, COALESCE(NULLIF(p.name, ''), s.name) AS name, COALESCE(NULLIF(p.description, ''), s.short_description) AS description, 
+      p.min_player, p.max_player, ROUND(p.n_playtime / 60::numeric, 1) AS n_playtime FROM private_games p 
+      LEFT JOIN steam_games s ON s.id_app_steam = p.id_app_steam AND s.b_deleted = false
+      WHERE p.id_user = :id_user AND p.b_deleted = false
+      ORDER BY COALESCE(NULLIF(p.name, ''), s.name)
+      LIMIT :limit OFFSET :offset`,
+      {
+        replacements: {
+          id_user: idUser,
+          limit: parseInt(pageSize, 10),
+          offset: parseInt(offset, 10),
+        },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    const count = countResult[0].count;
+
+    res.send({
+      totalItems: count,
+      items: rows,
+      totalPages: Math.ceil(count / pageSize),
+      currentPage: page,
     });
+  } catch (error) {
+    console.error("Error fetching private games:", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 exports.update = (req, res) => {
@@ -190,7 +248,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getSteamOwnedGames = (req, res) => {
-  const idUser = req.params.id;
+  const idUser = req.query.idUser;
 
   Account.findOne({ where: { id_user: idUser, b_deleted: false } })
     .then(async (data) => {

@@ -1,4 +1,4 @@
-import setupInterceptors from "../https-common";
+import { https_public, setupInterceptors } from "../https-common";
 
 const axiosInstance = setupInterceptors();
 
@@ -6,6 +6,10 @@ const CollectionGamesData = {
   getAll: (idListGames, idUser) => {
     const params = { idUser: idUser };
     return axiosInstance.get(`/collection-games/${idListGames}`, { params });
+  },
+
+  getAllPublic: (idListGames) => {
+    return https_public.get(`/collection-games/public/${idListGames}`);
   },
 
   addGamesToCollection: (idListGames, idUser, data) => {

@@ -31,7 +31,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING, // или дату?
     },
     n_recommendation: {
-      type: Sequelize.INTEGER, // или integer?
+      type: Sequelize.INTEGER,
     },
     b_deleted: {
       type: Sequelize.BOOLEAN,

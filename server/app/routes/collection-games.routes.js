@@ -8,6 +8,8 @@ module.exports = (app) => {
 
   router.get("/:id", authenticateToken, collectionGames.getAll);
 
+  router.get("/public/:id", collectionGames.getAll);
+
   router.delete("/:id", authenticateToken, collectionGames.delete);
 
   app.use("/api/collection-games", router);

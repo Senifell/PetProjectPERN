@@ -18,6 +18,9 @@ import FortuneWheelPage from "./components/fortune-wheel.component";
 import { useUser } from "./userContext";
 import { useAuth } from "./authContext";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import NotFound from "./NotFound";
 
 function App() {
@@ -57,6 +60,7 @@ function App() {
 
   return (
     <div style={appStyles}>
+      <ToastContainer />
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <Link to={"/list-games"} className="navbar-brand">
           Главная страница

@@ -1,28 +1,40 @@
-import React, { useState, useEffect, useCallback } from "react";
-import PrivateGamesDataService from "../services/private-games.service";
+import React, { useState, useEffect } from "react";
 import ErrorComponent from "./error.component";
+import Pagination from "./Pagination";
+import GamesTable from "./private-games-table.component";
+import GameModal from "./private-games-modal.component";
+import PrivateGamesDataService from "../services/private-games.service";
 
-import {
-  Form,
-  FormGroup,
-  FormLabel,
-  FormControl,
-  Button,
-  Modal,
-} from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
-// import AddPrivateGames from "./add-private-games.component";
 import { useUser } from "../userContext";
+import usePrivateGames from "../hooks/usePrivateGames";
 
-// import styles from "./list-games.css";
+import "./private-games.css";
 
-function PrivateGames() {
+function PrivateGamesPage() {
   const { user } = useUser();
 
-  const [privateGames, setPrivateGames] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState(null);
+  const [showDescription, setShowDescription] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(50);
+  const [error, setError] = useState(null);
+
+  const { privateGames, errorPrivateGames, getPrivateGames } = usePrivateGames(
+    user.id,
+    currentPage,
+    pageSize
+  );
+
+  useEffect(() => {
+    getPrivateGames();
+  }, [getPrivateGames]);
+
+  useEffect(() => {
+    setError(errorPrivateGames);
+  }, [errorPrivateGames]);
 
   const [newGame, setNewGame] = useState({
     name: "",
@@ -34,7 +46,6 @@ function PrivateGames() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Проверяем, что значение не является элементом DOM
     if (typeof value === "string" || typeof value === "number") {
       setNewGame((prevGame) => ({
         ...prevGame,
@@ -43,29 +54,15 @@ function PrivateGames() {
     }
   };
 
-  const getPrivateGames = useCallback(() => {
-    PrivateGamesDataService.getAll(user.id)
-      .then((response) => {
-        setPrivateGames(response.data);
-      })
-      .catch((e) => {
-        setError(e.message || "Что-то пошло не так");
-      });
-  }, [user.id]);
-
-  useEffect(() => {
-    getPrivateGames();
-  }, [getPrivateGames]);
-
   const handleUpdateClick = (game) => {
     const { n_playtime, ...gameToUpdate } = game;
     setNewGame(gameToUpdate);
     setIsEditing(true);
-    setShowModal(true); // Открываем модальное окно для редактирования
+    setShowModal(true);
   };
 
   const handleUpdate = () => {
-    PrivateGamesDataService.update(newGame.id, newGame)
+    PrivateGamesDataService.update(user.id, newGame.id, newGame)
       .then(() => {
         getPrivateGames();
       })
@@ -75,9 +72,9 @@ function PrivateGames() {
   };
 
   const handleDelete = (id) => {
-    PrivateGamesDataService.delete(id)
+    PrivateGamesDataService.deleteGame(user.id, id)
       .then(() => {
-        setPrivateGames(privateGames.filter((game) => game.id !== id));
+        getPrivateGames();
       })
       .catch((e) => {
         console.log(e);
@@ -85,7 +82,7 @@ function PrivateGames() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Предотвращаем стандартное поведение формы
+    e.preventDefault();
 
     if (!newGame.name) {
       alert("Пожалуйста, заполните поле 'Название'");
@@ -95,10 +92,10 @@ function PrivateGames() {
     if (isEditing) {
       handleUpdate();
     } else {
-      handleAdd(); // Передаем newGame в обработчик handleAdd
+      handleAdd();
     }
 
-    setShowModal(false); // Закрываем модальное окно
+    setShowModal(false);
     setNewGame({
       name: "",
       description: "",
@@ -110,7 +107,7 @@ function PrivateGames() {
   };
 
   const handleAdd = () => {
-    PrivateGamesDataService.create(newGame)
+    PrivateGamesDataService.create(user.id, newGame)
       .then(() => {
         getPrivateGames();
       })
@@ -125,8 +122,8 @@ function PrivateGames() {
 
   const handleAddSteamButtonClick = () => {
     PrivateGamesDataService.getSteamGames(user.id)
-      .then((response) => {
-        setPrivateGames(response.data);
+      .then(() => {
+        getPrivateGames();
       })
       .catch((e) => {
         setError(e.message || "Что-то пошло не так");
@@ -139,127 +136,51 @@ function PrivateGames() {
 
   return (
     <div className="container">
-      <h2 className="bg-beige p-3">Список игр</h2>
+      <h2>Список игр</h2>
+      <Button
+        variant="link"
+        onClick={() => setShowDescription(!showDescription)}
+      >
+        Как сформировать список игр
+      </Button>
+      {showDescription && (
+        <div className="description">
+          Сформировать список игр можно с помощью ручного добавления игр
+          ("Добавить") и с помощью интеграции со своим Steam аккаунтом
+          ("Загрузить список игр из Steam"). Для загрузки игр из Steam
+          необходимо добавить свой Steam ID в личном кабинете и удостовериться,
+          что ваш аккаунт Steam не является приватным.
+        </div>
+      )}
+      <div>Всего игр: {privateGames.totalItems}</div>
       <button className="btn btn-success" onClick={handleAddButtonClick}>
         Добавить
-      </button>{" "}
-      <span />
+      </button>
       <button className="btn btn-primary" onClick={handleAddSteamButtonClick}>
         Загрузить список игр из Steam
       </button>
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Добавить игру</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <FormGroup>
-              <FormLabel htmlFor="name">Название</FormLabel>
-              <FormControl
-                type="text"
-                id="name"
-                placeholder="Название"
-                name="name"
-                value={newGame.name}
-                onChange={handleChange}
-                className={!newGame.name ? "is-invalid" : ""}
-                required
-              />
-            </FormGroup>
-            <FormControl.Feedback type="invalid">
-              Поле "Название" обязательно для заполнения
-            </FormControl.Feedback>
-            <FormGroup>
-              <FormLabel htmlFor="description">Описание</FormLabel>
-              <FormControl
-                as="textarea"
-                id="description"
-                placeholder="Описание"
-                name="description"
-                value={newGame.description}
-                onChange={handleChange}
-              />
-            </FormGroup>
-            <FormGroup>
-              <FormLabel htmlFor="min_player">
-                Мин. количество игроков
-              </FormLabel>
-              <FormControl
-                type="number"
-                id="min_player"
-                placeholder="Мин. количество игроков"
-                name="min_player"
-                value={newGame.min_player}
-                onChange={handleChange}
-                min={0}
-              />
-            </FormGroup>
-            <FormGroup>
-              <FormLabel htmlFor="max_player">
-                Макс. количество игроков
-              </FormLabel>
-              <FormControl
-                type="number"
-                id="max_player"
-                placeholder="Макс. количество игроков"
-                name="max_player"
-                value={newGame.max_player}
-                onChange={handleChange}
-                min={0}
-              />
-            </FormGroup>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Закрыть
-            </Button>
-            <Button variant="success" onClick={handleSubmit}>
-              Сохранить
-            </Button>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer></Modal.Footer>
-      </Modal>
-      <table className="table">
-        <thead className="bg-beige">
-          <tr>
-            <th scope="col">Название</th>
-            <th scope="col">Мин. количество игроков</th>
-            <th scope="col">Макс. количество игроков</th>
-            <th scope="col">Время игры (час)</th>
-            <th scope="col">Описание</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {privateGames.map((game) => (
-            <tr key={game.id}>
-              <td>{game.name}</td>
-              <td>{game.min_player}</td>
-              <td>{game.max_player}</td>
-              <td>{game.n_playtime}</td>
-              <td>{game.description}</td>
-              <td>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleUpdateClick(game)}
-                >
-                  Редактировать
-                </button>
-              </td>
-              <td>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(game.id)}
-                >
-                  Удалить &#128465;
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <GamesTable
+        games={privateGames.items}
+        handleUpdateClick={handleUpdateClick}
+        handleDelete={handleDelete}
+        editMode={true}
+      />
+      <Pagination
+        className="pagination-bar"
+        currentPage={currentPage}
+        totalCount={privateGames.totalItems}
+        pageSize={pageSize}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
+      <GameModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        newGame={newGame}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
     </div>
   );
 }
 
-export default PrivateGames;
+export default PrivateGamesPage;

@@ -1,0 +1,57 @@
+.table-container {
+    overflow-x: auto;
+    padding-top: 10px;
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #88afeb;
+    font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.col-status,
+.col-recomendation {
+    width: 7%;
+    text-align: center;
+}
+
+.col-description,
+.col-genre,
+.col-title {
+    width: 20%;
+}
+
+.col-action {
+    width: 8%;
+    text-align: center;
+}
+
+.col-action-add {
+    width: 5%;
+    text-align: center;
+}
+
+.header-2 {
+    padding: 40px 0px;
+}

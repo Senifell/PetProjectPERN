@@ -1,4 +1,4 @@
-import setupInterceptors from "../https-common";
+import { setupInterceptors } from "../https-common";
 
 const axiosInstance = setupInterceptors();
 
@@ -9,9 +9,18 @@ const SteamGamesDataService = {
     pageSize = 50,
     search = "",
     isFree = "all",
-    isLanguage = "all"
+    isLanguage = "all",
+    sortBy
   ) => {
-    const params = { page, pageSize, search, idUser, isFree, isLanguage };
+    const params = {
+      page,
+      pageSize,
+      search,
+      idUser,
+      isFree,
+      isLanguage,
+      sortBy,
+    };
     return axiosInstance.get(`/steam-games/${idUser}`, { params });
   },
 
@@ -24,7 +33,7 @@ const SteamGamesDataService = {
   },
 
   updateAll: (idUser, setting = "list-games") => {
-    const params = { setting, idUser };
+    const params = { idUser, setting };
     return axiosInstance.put(`/steam-games/update`, { params });
   },
 

@@ -67,6 +67,7 @@ exports.findAll = async (req, res) => {
     search = "",
     isFree = "all",
     isLanguage = "all",
+    sortBy = "nameAsc",
   } = req.query;
   const offset = (page - 1) * pageSize;
 
@@ -111,7 +112,15 @@ exports.findAll = async (req, res) => {
           ? "AND is_free = true"
           : "AND is_free = false"
       }
-      ORDER BY name
+      ${
+        sortBy === "nameAsc"
+          ? "ORDER BY name NULLS LAST"
+          : sortBy === "nameDesc"
+          ? "ORDER BY name DESC NULLS LAST"
+          : sortBy === "recommendationAsc"
+          ? "ORDER BY n_recommendation, name NULLS LAST"
+          : "ORDER BY n_recommendation DESC NULLS LAST, name"
+      }
       LIMIT :limit OFFSET :offset`,
       {
         replacements: {
@@ -299,7 +308,7 @@ exports.updateAll = async (req, res) => {
 
   if (settings === "list-games") {
     await fetchAndSaveSteamGames();
-    res.status(200).send("Refresh started");
+    res.status(200).send("Refresh");
   } else if (settings === "info") {
     let countSuccess = 0;
 

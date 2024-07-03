@@ -1,27 +1,33 @@
-import setupInterceptors from "../https-common";
+import { setupInterceptors } from "../https-common";
 
 const axiosInstance = setupInterceptors();
 
 const PrivateGamesDataService = {
-  getAll: (idUser) => {
-    const params = { idUser };
+  getAll: (idUser, page = 1, pageSize = 50) => {
+    const params = { idUser, page, pageSize };
     return axiosInstance.get(`/private-games/${idUser}`, { params });
   },
 
-  getSteamGames: (id) => {
-    return axiosInstance.get(`/private-games/${id}/steam-game`);
+  getSteamGames: (idUser) => {
+    const params = { idUser };
+    return axiosInstance.get(`/private-games/${idUser}/get-steam-game`, {
+      params,
+    });
   },
 
-  create: (data) => {
-    return axiosInstance.post(`/private-games`, data);
+  create: (idUser, data) => {
+    const params = { idUser };
+    return axiosInstance.post(`/private-games`, data, { params });
   },
 
-  update: (id, data) => {
-    return axiosInstance.put(`/private-games/${id}`, data);
+  update: (idUser, id, data) => {
+    const params = { idUser };
+    return axiosInstance.put(`/private-games/${id}`, data, { params });
   },
 
-  deleteGame: (id) => {
-    return axiosInstance.delete(`/private-games/${id}`);
+  deleteGame: (idUser, id) => {
+    const params = { idUser };
+    return axiosInstance.delete(`/private-games/${id}`, { params });
   },
 };
 
