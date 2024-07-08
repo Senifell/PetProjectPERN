@@ -9,7 +9,7 @@ const SteamGamesDataService = {
     pageSize = 50,
     search = "",
     isFree = "all",
-    isLanguage = "all",
+    hasLanguage = "all",
     sortBy
   ) => {
     const params = {
@@ -18,7 +18,7 @@ const SteamGamesDataService = {
       search,
       idUser,
       isFree,
-      isLanguage,
+      hasLanguage,
       sortBy,
     };
     return axiosInstance.get(`/steam-games/${idUser}`, { params });

@@ -10,22 +10,22 @@ const GamesTable = ({
   addToCollection,
 }) => {
   return (
-    <div className="table-container">
-      <table className="table">
-        <thead className="bg-beige">
+    <div className="table-responsive">
+      <table className="table table-striped table-hover">
+        <thead className="bg-beige lead">
           <tr>
             {!editMode && <th scope="col"></th>}
-            <th scope="col" className="col-title">
+            <th scope="col" className="col-title py-3">
               Название
             </th>
-            <th scope="col" className="col-min-players">
-              Мин. количество игроков
+            <th scope="col" className="col-min-players py-3">
+              Мин. игроков
             </th>
             <th scope="col" className="col-max-players">
-              Макс. количество игроков
+              Макс. игроков
             </th>
             <th scope="col" className="col-playtime">
-              Время игры (час)
+              Время игры (ч)
             </th>
             <th scope="col" className="col-description">
               Описание

@@ -14,50 +14,88 @@ const SteamGameModal = ({
   steamGame,
   handleUpdateData,
 }) => {
+  const boxStyle = {
+    width: "600px",
+    height: "auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    border: "5px solid #328daa",
+    borderRadius: "10px",
+    padding: "20px",
+    boxSizing: "border-box",
+  };
+
+  const modalStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
+
   return (
-    <Modal show={showModal} onHide={() => setShowModal(false)}>
+    <Modal
+      className={modalStyle}
+      show={showModal}
+      onHide={() => setShowModal(false)}
+    >
       <Modal.Header closeButton>
-        <Modal.Title>Об игре</Modal.Title>
+        <Modal.Title>Об игре: {steamGame.name}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ padding: "20px" }}>
         <div>
-          <span>Название: {steamGame.name}</span>
+          <span>
+            <b>Название:</b> {steamGame.name}
+          </span>
         </div>
         <div>
-          <span>Статус: {!steamGame.is_free ? "Платная" : "Бесплатная"}</span>
+          <span>
+            <b>Статус:</b> {!steamGame.is_free ? "Платная" : "Бесплатная"}
+          </span>
         </div>
         <div>
-          <span>Возраст: {steamGame.required_age}+</span>
+          <span>
+            <b>Поддерживаемые языки:</b> {steamGame.supported_languages}
+          </span>
         </div>
         <div>
-          <span>Поддерживаемые языки: {steamGame.supported_languages}</span>
+          <span>
+            <b>Жанры:</b> {steamGame.genres}
+          </span>
         </div>
         <div>
-          <span>Жанры: {steamGame.genres}</span>
+          <span>
+            <b>Категории:</b> {steamGame.categories}
+          </span>
         </div>
         <div>
-          <span>Категории: {steamGame.categories}</span>
+          <span>
+            <b>Краткое описание:</b> {steamGame.short_description}
+          </span>
         </div>
         <div>
-          <span>Краткое описание: {steamGame.short_description}</span>
+          <span>
+            <b>Дата релиза:</b> {steamGame.release_date}
+          </span>
         </div>
         <div>
-          <span>Дата релиза: {steamGame.release_date}</span>
+          <span>
+            <b>Рекомендации:</b> {steamGame.n_recommendation || 0}
+          </span>
         </div>
-        <div>
-          <span>Рекомендации: {steamGame.n_recommendation}</span>
-        </div>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
-          Закрыть
-        </Button>
+      </Modal.Body>
+      <Modal.Footer>
         <Button
           variant="primary"
           onClick={() => handleUpdateData(steamGame.id)}
         >
-          Обновить
+          Обновить данные
         </Button>
-      </Modal.Body>
-      <Modal.Footer></Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowModal(false)}>
+          Закрыть
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };

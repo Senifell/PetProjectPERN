@@ -9,6 +9,11 @@
     border-collapse: collapse;
 }
 
+.table th {
+    background-color: #88afeb;
+    font-weight: bold;
+}
+
 .table th,
 .table td {
     padding: 8px;
@@ -17,10 +22,6 @@
     border: 1px solid #ddd;
 }
 
-.table th {
-    background-color: #88afeb;
-    font-weight: bold;
-}
 
 .table tr:nth-child(even) {
     background-color: #f9f9f9;
@@ -51,9 +52,26 @@
 }
 
 .description {
-    margin: 15px 0;
     padding: 10px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 5px;
+}
+
+.lead {
+    padding-right: 5px;
+    /* font-weight: 400; */
 }

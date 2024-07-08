@@ -4,19 +4,26 @@ const axiosInstance = setupInterceptors();
 const AccountDataService = {
   get: (idUser) => {
     const params = { idUser };
-    return axiosInstance.get(`/account/${idUser}`, { params });
+    return axiosInstance.get(`/account`, { params });
   },
 
   create: (data) => {
     return axiosInstance.post("/account", data);
   },
 
-  update: (idUser, data) => {
-    return axiosInstance.put(`/account/${idUser}`, data);
+  update: (idUser, formData) => {
+    // const params = { idUser };
+    return axiosInstance.post(`/account/${idUser}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
   },
 
   deleteAccount: (idUser) => {
-    return axiosInstance.delete(`/account/${idUser}`);
+    const params = { idUser };
+    return axiosInstance.delete(`/account/${idUser}`, { params });
   },
 };
 

@@ -30,13 +30,14 @@ function App() {
   const navigate = useNavigate();
 
   const appStyles = {
-    backgroundImage: `url('/images/background-img.jpg')`,
-    backgroundSize: "cover", // Растягиваем или сжимаем изображение, чтобы оно полностью заполняло контейнер
-    backgroundPosition: "top", // Центрируем изображение по горизонтали и вертикали
-    backgroundRepeat: "no-repeat",
+    // backgroundImage: `url('/images/background-img.jpg')`,
+    // backgroundSize: "cover", // Растягиваем или сжимаем изображение, чтобы оно полностью заполняло контейнер
+    // backgroundPosition: "top", // Центрируем изображение по горизонтали и вертикали
+    // backgroundRepeat: "no-repeat",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
+    backgroundColor: "#272424",
   };
 
   const updateLoggedInStatus = (status) => {
@@ -48,8 +49,10 @@ function App() {
 
     if (storedLoggedIn) {
       setLoggedIn(true);
+    } else {
+      setLoggedIn(false);
     }
-  }, []);
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -88,7 +91,10 @@ function App() {
           )}
           {loggedIn && (
             <li className="nav-item">
-              <Link to={`/steam-games/${user.id}`} className="nav-link">
+              <Link
+                to={user ? `/steam-games/${user.id}` : "/steam-games"}
+                className="nav-link"
+              >
                 Steam игры
               </Link>
             </li>
@@ -109,10 +115,7 @@ function App() {
           )}
           {loggedIn && (
             <li className="nav-item ml-auto">
-              <Link
-                to={user ? `/account/${user.id}` : "/account"}
-                className="nav-link"
-              >
+              <Link to={`/account`} className="nav-link">
                 Личный кабинет
               </Link>
             </li>
@@ -123,7 +126,7 @@ function App() {
       <div
         className="container mt-3"
         style={{
-          backgroundColor: "#dcf1fc",
+          backgroundColor: "#dcf1fc", //"#dcf1fc",
           padding: "20px",
           marginBottom: "20px",
           maxWidth: "80%",
@@ -134,7 +137,7 @@ function App() {
         <Routes>
           <Route path="/" element={<PublicListGames />} />
           <Route path="/list-games" element={<PublicListGames />} />
-          <Route path="/account/:userId" element={<Account />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/list-games/:userId" element={<ListGames />} />
           <Route path="/private-games/:userId" element={<PrivateGames />} />
           <Route path="/steam-games/:userId" element={<SteamGames />} />

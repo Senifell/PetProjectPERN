@@ -10,6 +10,8 @@ export function usePrivateGames(userId, currentPage, pageSize) {
   });
   const [errorPrivateGames, setErrorPrivateGames] = useState(null);
 
+  const [hasTrue, setHasTrue] = useState(false);
+
   const getPrivateGames = useCallback(() => {
     PrivateGamesDataService.getAll(userId, currentPage, pageSize)
       .then((response) => {
@@ -21,9 +23,15 @@ export function usePrivateGames(userId, currentPage, pageSize) {
             currentPage: 1,
           }
         );
+
+        setHasTrue(true);
       })
       .catch((e) => {
-        setErrorPrivateGames(e);
+        if (!hasTrue && !e.response.status === 403) {
+          //   console.log("Пропуск ошибки");
+          // } else {
+          setErrorPrivateGames(e);
+        }
       });
   }, [userId, currentPage, pageSize]);
 

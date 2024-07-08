@@ -170,11 +170,9 @@ exports.update = (req, res) => {
 
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
-  const id = req.params.id;
+  const idUser = req.params.idUser;
 
-  User.destroy({
-    where: { id: id },
-  })
+  User.update({ b_deleted: true }, { where: { id: idUser, b_deleted: false } })
     .then((num) => {
       if (num == 1) {
         res.send({
@@ -182,13 +180,13 @@ exports.delete = (req, res) => {
         });
       } else {
         res.send({
-          message: `Cannot delete User with id=${id}. Maybe User was not found!`,
+          message: `Cannot delete User with id=${idUser}. Maybe User was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Could not delete User with id=" + id,
+        message: "Could not delete User with id=" + idUser,
       });
     });
 };
@@ -212,7 +210,7 @@ exports.deleteAll = (req, res) => {
 exports.logInUser = (req, res) => {
   const { username, password } = req.body;
 
-  User.findOne({ where: { username } })
+  User.findOne({ where: { username, b_deleted: false } })
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: "User not found." });

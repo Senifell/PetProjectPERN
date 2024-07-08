@@ -23,7 +23,7 @@ const authenticateToken = async (req, res, next) => {
       return res.sendStatus(403);
     }
   } else {
-    return res.sendStatus(401); // Подумать по поводу статусов ошибок
+    return res.sendStatus(403); // Подумать по поводу статусов ошибок
   }
 };
 

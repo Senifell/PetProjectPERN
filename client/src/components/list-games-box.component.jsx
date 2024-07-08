@@ -71,24 +71,21 @@ function ListGamesBox({ list, onUpdateList, onDelete, privateMode }) {
           </div>
         )}
       </div>
-      <p>{list.description}</p>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+      <p className="description-collection">{list.description}</p>
+      <div className="games-list">
         {games.length > 0
           ? `Игры:${String.fromCharCode(160)}`
           : "Список игр пуст"}
         {games.slice(0, showAllGames ? games.length : 5).map((game, index) => (
           <React.Fragment key={game.id_game}>
-            {index > 0 && <span>,&nbsp;</span>}
-            <div style={{ display: "flex", alignItems: "center" }}>
+            {index > 0 && <span>, &nbsp;</span>}
+            <div className="game-item">
               <span>{game.name}</span>
             </div>
           </React.Fragment>
         ))}
         {!showAllGames && games.length > 5 && (
-          <button
-            onClick={toggleShowAllGames}
-            style={{ border: "none", background: "none", cursor: "pointer" }}
-          >
+          <button onClick={toggleShowAllGames} className="show-more-button">
             ...
           </button>
         )}

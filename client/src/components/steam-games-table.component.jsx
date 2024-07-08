@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ShowLongField from "./show-long-field.component";
 import "./steam-games.css";
 
@@ -99,12 +99,12 @@ const SteamGamesTable = ({
           </div>
         </div>
       </div>
-      <div className="table-container">
-        <table className="table">
-          <thead className="bg-beige">
+      <div className="table-responsive">
+        <table className="table table-striped table-hover">
+          <thead className="bg-beige lead thead-custom">
             <tr>
               <th scope="col" className="col-action-add"></th>
-              <th scope="col" className="col-title">
+              <th scope="col" className="col-title py-3">
                 Название
               </th>
               <th scope="col" className="col-description">
@@ -150,7 +150,7 @@ const SteamGamesTable = ({
                   </td>
                   <td className="col-genre">{game.genres}</td>
                   <td className="col-recommendation">
-                    {game.n_recommendation}
+                    {game.n_recommendation || 0}
                   </td>
                   <td className="col-action">
                     <button

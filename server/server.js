@@ -61,6 +61,11 @@ db.sequelize
     console.error("Ошибка при создании таблицы Account:", error);
   });
 
+const uploadDir = path.join(__dirname, "uploads");
+
+// Настройка маршрута для обслуживания статических файлов из папки 'uploads'
+app.use("/uploads", express.static(uploadDir));
+
 const job = schedule.scheduleJob("*/5 * * * *", async () =>
   scheduleUpdateSteamGameInfo.doUpdate()
 ); // Пока не нужно, надо переделать

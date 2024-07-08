@@ -1,0 +1,39 @@
+.account-container {
+    border: 5px solid #328daa;
+    background-color: white;
+    padding: 20px;
+    margin: 40px auto;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.account-card {
+    display: flex;
+}
+
+.account-left {
+    flex: 40%;
+    text-align: center;
+}
+
+.account-right {
+    flex: 60%;
+    padding: 0px 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 900px) {
+    .account-card {
+        flex-direction: column;
+        max-width: 100%;
+        align-items: center;
+    }
+
+    .account-left,
+    .account-right {
+        flex: 100%;
+    }
+}

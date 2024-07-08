@@ -136,8 +136,8 @@ function PrivateGamesPage() {
 
   return (
     <div className="container">
-      <h2>Список игр</h2>
-      <Button
+      <h2 className="h2 text-center my-4">Список игр</h2>
+      {/* <Button
         variant="link"
         onClick={() => setShowDescription(!showDescription)}
       >
@@ -151,14 +151,21 @@ function PrivateGamesPage() {
           необходимо добавить свой Steam ID в личном кабинете и удостовериться,
           что ваш аккаунт Steam не является приватным.
         </div>
-      )}
-      <div>Всего игр: {privateGames.totalItems}</div>
-      <button className="btn btn-success" onClick={handleAddButtonClick}>
-        Добавить
-      </button>
-      <button className="btn btn-primary" onClick={handleAddSteamButtonClick}>
-        Загрузить список игр из Steam
-      </button>
+      )} */}
+      <div className="header-container">
+        <div className="buttons-container">
+          <button className="btn btn-success" onClick={handleAddButtonClick}>
+            Добавить
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleAddSteamButtonClick}
+          >
+            Загрузить список игр из Steam
+          </button>
+        </div>
+        <div className="lead">Всего игр: {privateGames.totalItems}</div>
+      </div>
       <GamesTable
         games={privateGames.items}
         handleUpdateClick={handleUpdateClick}

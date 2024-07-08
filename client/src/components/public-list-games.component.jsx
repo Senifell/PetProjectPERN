@@ -34,8 +34,8 @@ function PublicListGames() {
 
   return (
     <div>
-      <h2>Коллекции игр</h2>
-      <div>
+      <h1 className="h1 my-4 text-center">Коллекции игр</h1>
+      <div className="lead">
         Представленные публичные коллекции были созданы пользователями сайта
       </div>
       <br />

@@ -7,7 +7,8 @@ export function useSteamGames(
   pageSize,
   searchGameByName,
   isFree,
-  hasLanguage
+  hasLanguage,
+  sortBy
 ) {
   const [steamGames, setSteamGames] = useState({
     items: [],
@@ -17,6 +18,8 @@ export function useSteamGames(
   });
   const [errorSteamGames, setErrorSteamGames] = useState(null);
 
+  const [hasTrue, setHasTrue] = useState(false);
+
   const getSteamGames = useCallback(() => {
     SteamGamesDataService.getAll(
       userId,
@@ -24,7 +27,8 @@ export function useSteamGames(
       pageSize,
       searchGameByName,
       isFree,
-      hasLanguage
+      hasLanguage,
+      sortBy
     )
       .then((response) => {
         setSteamGames(
@@ -35,11 +39,22 @@ export function useSteamGames(
             currentPage: 1,
           }
         );
+        setHasTrue(true);
       })
       .catch((e) => {
-        setErrorSteamGames(e.message || "Что-то пошло не так");
+        if (hasTrue && e.response.status === 403) {
+          setErrorSteamGames(e.message || "Что-то пошло не так");
+        }
       });
-  }, [userId, currentPage, pageSize, searchGameByName, isFree, hasLanguage]);
+  }, [
+    userId,
+    currentPage,
+    pageSize,
+    searchGameByName,
+    isFree,
+    hasLanguage,
+    sortBy,
+  ]);
 
   return { steamGames, errorSteamGames, getSteamGames };
 }

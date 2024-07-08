@@ -28,17 +28,15 @@ body {
   height: auto;
   min-height: 200px;
   position: relative;
-  /* border: 5px solid #a6e9e9; */
-  border: none;
-  /* border: 5px solid #922c2c; */
-  border: 2px solid #9cc8ec;
+  border: 2px solid #328DAA;
   border-radius: 10px;
   padding: 10px;
   margin: 0;
-  background-color: white;
-  /*rgba(250, 117, 117, 0.377);*/
+  background-color: #ffffff;
   color: black;
-  /* backrgb(78, 11, 11)color: rgba(205, 247, 244, 0.507); */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .add-game-icon {
@@ -47,7 +45,7 @@ body {
   min-width: 200px;
   height: auto;
   min-height: 200px;
-  border: 5px solid #5682c4;
+  border: 5px solid #328DAA;
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -64,17 +62,16 @@ body {
 
 
 .button-container {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
+  margin-top: auto;
   display: flex;
-  gap: 10px;
+  gap: 5px;
 }
 
 .list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .button-spin-wheel {
@@ -108,4 +105,27 @@ body {
 .spin-wheel-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+
+.description-collection {
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.games-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.game-item {
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+}
+
+.show-more-button {
+  border: none;
+  background: none;
+  cursor: pointer;
 }

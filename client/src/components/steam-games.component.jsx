@@ -10,18 +10,14 @@ import { useUser } from "../userContext";
 import SteamGameModal from "./steam-games-modal.component";
 import SteamGamesTable from "./steam-games-table.component";
 
+import useSteamGames from "../hooks/useSteamGames";
+
 import { toast } from "react-toastify";
 
 function SteamGames() {
   const { user } = useUser();
   const mode = false; //Изменить после добавления ролей
 
-  const [steamGames, setSteamGames] = useState({
-    items: [],
-    totalItems: 0,
-    totalPages: 0,
-    currentPage: 1,
-  });
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
 
@@ -46,34 +42,23 @@ function SteamGames() {
   const [isFree, setIsFree] = useState("all");
   const [hasLanguage, setHasLanguage] = useState("all");
 
-  const getSteamGames = useCallback(() => {
-    SteamGamesDataService.getAll(
-      user.id,
-      currentPage,
-      pageSize,
-      searchTerm,
-      isFree,
-      hasLanguage,
-      sortBy
-    )
-      .then((response) => {
-        setSteamGames(
-          response.data || {
-            items: [],
-            totalItems: 0,
-            totalPages: 0,
-            currentPage: 1,
-          }
-        );
-      })
-      .catch((e) => {
-        setError(e.message || "Что-то пошло не так");
-      });
-  }, [user.id, currentPage, pageSize, searchTerm, isFree, hasLanguage, sortBy]);
+  const { steamGames, errorSteamGames, getSteamGames } = useSteamGames(
+    user.id,
+    currentPage,
+    pageSize,
+    searchTerm,
+    isFree,
+    hasLanguage,
+    sortBy
+  );
 
   useEffect(() => {
     getSteamGames();
   }, [getSteamGames]);
+
+  useEffect(() => {
+    setError(errorSteamGames);
+  }, [errorSteamGames]);
 
   const handleUpdateAll = () => {
     SteamGamesDataService.updateAll(user.id, "list-games") // Обновить список игр из Стим
@@ -169,7 +154,9 @@ function SteamGames() {
   return (
     <div className="container">
       <div className="d-flex align-items-center justify-content-center">
-        <h2 className="header-2 text-center flex-grow-1">Список игр Steam</h2>
+        <h2 className="h2 text-center mt-4 mb-5 flex-grow-1">
+          Список игр Steam
+        </h2>
         {!mode && (
           <div className="justify-content-end">
             <button

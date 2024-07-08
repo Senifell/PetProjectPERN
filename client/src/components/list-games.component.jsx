@@ -12,13 +12,19 @@ function ListGames() {
   const [listGames, setListGames] = useState([]);
   const [error, setError] = useState(null);
 
+  const [hasTrue, setHasTrue] = useState(false);
+
   const getListGames = useCallback(() => {
     ListGamesDataService.getAll(user.id)
       .then((response) => {
         setListGames(response.data);
+        setHasTrue(true);
       })
       .catch((e) => {
-        setError(e.message || "Что-то пошло не так");
+        if (!hasTrue && !e.response.status === 403) {
+          // по-хорошему надо refresh писать для основных запросов страниц дот отправки самого запроса
+          setError(e.message || "Что-то пошло не так");
+        }
       });
   }, [user.id]);
 
@@ -62,21 +68,21 @@ function ListGames() {
 
   return (
     <div>
-      <h2>Пользовательские коллекции игр</h2>
-      <div>
+      <h2 className="h2 text-center my-4">Пользовательские коллекции игр</h2>
+      {/* <div>
         Нажмите "редактировать", чтобы изменить описание коллекции и доступный
         список игр. Публичные коллекции доступны всем пользователям сайта,
         личные коллекции видите только Вы.
-      </div>
-      <div>
+      </div> */}
+      <div className="lead">
         Нажмите на значок{" "}
         <img
           src="/images/spin_wheel.png"
           alt="Spin Wheel"
           className="button-spin-wheel"
         />
-        , чтобы открыть Колесо Фортуны выбранной коллекции! Опция доступна
-        только для коллекций с двумя и более играми. (:
+        , чтобы открыть Колесо Фортуны выбранной коллекции. Опция доступна
+        только для коллекций с двумя и более играми.
       </div>
       <br />
       <div className="list-games-container">
