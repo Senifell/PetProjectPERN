@@ -41,7 +41,8 @@ const CollectionGames = (db.collection_games =
     sequelize,
     Sequelize,
     ListGames,
-    PrivateGames
+    PrivateGames,
+    SteamGames
   ));
 
 module.exports = db;

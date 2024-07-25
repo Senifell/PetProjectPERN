@@ -16,89 +16,93 @@ const SteamGamesTable = ({
   handleMoreData,
   handleAddToPrivateGame,
   handleSort,
+  editMode,
+  handleAddToCollection,
 }) => {
   return (
     <div>
-      <div className="filter-container mb-2">
-        <div className="row mb-2">
-          <div className="col-md-6 d-flex">
-            <div className="col-6">
-              <div className="form-floating">
-                <select
-                  name="isFree"
-                  id="isFree"
-                  className="form-select"
-                  value={isFree}
-                  onChange={handleIsFreeChange}
-                  aria-label="Статус"
-                >
-                  <option value="all">Все</option>
-                  <option value="free">Бесплатные</option>
-                  <option value="no_free">Платные</option>
-                </select>
-                <label htmlFor="isFree">Статус</label>
+      {editMode && (
+        <div className="filter-container mb-2">
+          <div className="row mb-2">
+            <div className="col-md-6 d-flex">
+              <div className="col-6">
+                <div className="form-floating">
+                  <select
+                    name="isFree"
+                    id="isFree"
+                    className="form-select"
+                    value={isFree}
+                    onChange={handleIsFreeChange}
+                    aria-label="Статус"
+                  >
+                    <option value="all">Все</option>
+                    <option value="free">Бесплатные</option>
+                    <option value="no_free">Платные</option>
+                  </select>
+                  <label htmlFor="isFree">Статус</label>
+                </div>
+              </div>
+              <div className="col-6 p-0">
+                <div className="form-floating">
+                  <select
+                    name="language"
+                    id="language"
+                    className="form-select"
+                    value={hasLanguage}
+                    onChange={handleHasLanguageChange}
+                    aria-label="Язык"
+                  >
+                    <option value="all">Все</option>
+                    <option value="rus">Русский</option>
+                    <option value="en">Английский</option>
+                  </select>
+                  <label htmlFor="language">Язык</label>
+                </div>
               </div>
             </div>
-            <div className="col-6 p-0">
+          </div>
+          <div className="row mb-2">
+            <div className="col-md-6">
+              <div className="form-floating">
+                <input
+                  type="search"
+                  id="searchTerm"
+                  className="form-control"
+                  placeholder=""
+                  value={searchGameByName}
+                  onChange={handleSearch}
+                  style={{ width: "100%" }}
+                />
+                <label htmlFor="searchTerm" style={{ color: "#808080" }}>
+                  Поиск по названию
+                </label>
+              </div>
+            </div>
+            <div className="col-md-6 d-flex justify-content-end align-items-end">
               <div className="form-floating">
                 <select
-                  name="language"
-                  id="language"
+                  name="sort"
+                  id="sort"
                   className="form-select"
-                  value={hasLanguage}
-                  onChange={handleHasLanguageChange}
-                  aria-label="Язык"
+                  value={sortBy}
+                  onChange={handleSort}
+                  style={{ width: "auto" }}
                 >
-                  <option value="all">Все</option>
-                  <option value="rus">Русский</option>
-                  <option value="en">Английский</option>
+                  <option value="nameAsc">Название &nbsp; &#9650;</option>
+                  <option value="nameDesc">Название &nbsp; &#9660;</option>
+                  <option value="recommendationAsc">
+                    Рекомендации &nbsp; &#9650;
+                  </option>
+                  <option value="recommendationDesc">
+                    Рекомендации &nbsp; &#9660;
+                  </option>
                 </select>
-                <label htmlFor="language">Язык</label>
+                <label htmlFor="sort">Сортировка</label>
               </div>
             </div>
           </div>
         </div>
-        <div className="row mb-2">
-          <div className="col-md-6">
-            <div className="form-floating">
-              <input
-                type="search"
-                id="searchTerm"
-                className="form-control"
-                placeholder=""
-                value={searchGameByName}
-                onChange={handleSearch}
-                style={{ width: "100%" }}
-              />
-              <label htmlFor="searchTerm" style={{ color: "#808080" }}>
-                Поиск по названию
-              </label>
-            </div>
-          </div>
-          <div className="col-md-6 d-flex justify-content-end align-items-end">
-            <div className="form-floating">
-              <select
-                name="sort"
-                id="sort"
-                className="form-select"
-                value={sortBy}
-                onChange={handleSort}
-                style={{ width: "auto" }}
-              >
-                <option value="nameAsc">Название &nbsp; &#9650;</option>
-                <option value="nameDesc">Название &nbsp; &#9660;</option>
-                <option value="recommendationAsc">
-                  Рекомендации &nbsp; &#9650;
-                </option>
-                <option value="recommendationDesc">
-                  Рекомендации &nbsp; &#9660;
-                </option>
-              </select>
-              <label htmlFor="sort">Сортировка</label>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="bg-beige lead thead-custom">
@@ -119,23 +123,41 @@ const SteamGamesTable = ({
               <th scope="col" className="col-recommendation">
                 Рекомендации
               </th>
-              <th scope="col" className="col-action"></th>
-              <th scope="col" className="col-action"></th>
-              <th scope="col" className="col-action"></th>
+              {editMode && (
+                <>
+                  <th scope="col" className="col-action"></th>
+                  <th scope="col" className="col-action"></th>
+                  <th scope="col" className="col-action"></th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
             {Array.isArray(steamGames) && steamGames.length > 0 ? (
               steamGames.map((game) => (
                 <tr key={game.id}>
-                  <td className="col-action-add">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleAddToPrivateGame(game)}
-                    >
-                      <span>+</span>
-                    </button>
-                  </td>
+                  {editMode && (
+                    <td className="col-action-add">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleAddToPrivateGame(game)}
+                      >
+                        <span>+</span>
+                      </button>
+                    </td>
+                  )}
+                  {!editMode && (
+                    <td className="col-action-add">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() =>
+                          handleAddToCollection(game.id_app_steam, game.name)
+                        }
+                      >
+                        <span>+</span>
+                      </button>
+                    </td>
+                  )}
                   <td className="col-title">{game.name}</td>
                   <ShowLongField
                     longField={game.short_description}
@@ -152,30 +174,34 @@ const SteamGamesTable = ({
                   <td className="col-recommendation">
                     {game.n_recommendation || 0}
                   </td>
-                  <td className="col-action">
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleUpdateData(game.id)}
-                    >
-                      Обновить
-                    </button>
-                  </td>
-                  <td className="col-action">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleMoreData(game)}
-                    >
-                      Подробнее
-                    </button>
-                  </td>
-                  <td className="col-action">
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(game.id)}
-                    >
-                      Удалить
-                    </button>
-                  </td>
+                  {editMode && (
+                    <>
+                      <td className="col-action">
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => handleUpdateData(game.id)}
+                        >
+                          Обновить
+                        </button>
+                      </td>
+                      <td className="col-action">
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleMoreData(game)}
+                        >
+                          Подробнее
+                        </button>
+                      </td>
+                      <td className="col-action">
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleDelete(game.id)}
+                        >
+                          Удалить
+                        </button>
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))
             ) : (

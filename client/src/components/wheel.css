@@ -1,8 +1,102 @@
 .custom-wheel {
-    width: 1000px;
-    /* Ширина колеса */
-    height: 1000px;
-    /* Высота колеса */
-    /* Дополнительные стили по вашему усмотрению */
+    width: 50%;
+    height: auto;
     color: aliceblue
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border: 5px solid #328daa;
+    padding: 20px;
+    box-sizing: border-box;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.winner-display {
+    font-size: 1.5em;
+    margin: 20px 0px;
+}
+
+.content-container {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.left-container,
+.right-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 50%;
+    padding: 10px;
+}
+
+.wheel-container {
+    margin-bottom: 20px;
+}
+
+.settings-container,
+.lists-container,
+.events-container {
+    margin-bottom: 20px;
+}
+
+.events-container {
+    height: 300px;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.section-header {
+    font-weight: bold;
+}
+
+.event-list {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.event-item {
+    margin-bottom: 5px;
+}
+
+.clear-button {
+    margin-left: 10px;
+}
+
+
+.btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.lists-container,
+.events-container {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+@media (max-width: 800px) {
+
+    .left-container,
+    .right-container {
+        width: 100%;
+    }
 }

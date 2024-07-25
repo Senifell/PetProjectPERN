@@ -4,6 +4,7 @@ import "./private-games.css";
 
 const GamesTable = ({
   games,
+  collectionGames,
   handleUpdateClick,
   handleDelete,
   editMode,
@@ -12,7 +13,7 @@ const GamesTable = ({
   return (
     <div className="table-responsive">
       <table className="table table-striped table-hover">
-        <thead className="bg-beige lead">
+        <thead className={`bg-beige ${editMode ? "lead" : ""}`}>
           <tr>
             {!editMode && <th scope="col"></th>}
             <th scope="col" className="col-title py-3">
@@ -47,7 +48,9 @@ const GamesTable = ({
                     <button
                       className="btn btn-primary"
                       onClick={() => addToCollection(game.id, game.name)}
-                      disabled={games.some((g) => g.id_game === game.id)} //! Починить
+                      disabled={collectionGames.some(
+                        (g) => g.id_game === game.id
+                      )} //! Починить
                     >
                       <span>+</span>
                     </button>

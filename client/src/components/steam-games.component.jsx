@@ -187,6 +187,7 @@ function SteamGames() {
         handleMoreData={handleMoreData}
         handleAddToPrivateGame={handleAddToPrivateGame}
         handleSort={handleSort}
+        editMode={true}
       />
 
       <div>

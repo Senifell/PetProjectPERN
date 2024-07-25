@@ -1,16 +1,11 @@
 const db = require("../models");
 const sequelize = db.sequelize;
 const CollectionGames = db.collection_games;
-// const PrivateGames = db.private_games;
-// const ListGames = db.list_games;
-// const SteamGames = db.steam_games;
 const Op = db.Sequelize.Op;
 
 exports.create = async (req, res) => {
   const id_list_games = req.params.id;
   const bodyData = req.body;
-
-  console.log(bodyData);
 
   if (!Array.isArray(bodyData)) {
     return res.status(400).send({
@@ -22,11 +17,22 @@ exports.create = async (req, res) => {
     const promises = bodyData.map(async (item) => {
       const collectionGames = {
         id_list_games: id_list_games,
-        id_game: item,
+        id_game: item.id_game || null,
+        id_steam_game: item.id_steam_game || null,
+        name_custom_game:
+          !item.id_game && !item.id_steam_game ? item.name : null,
         b_deleted: 0,
       };
 
-      return CollectionGames.create(collectionGames);
+      try {
+        return await CollectionGames.create(collectionGames);
+      } catch (err) {
+        console.error(
+          `Error creating collection game for item ${JSON.stringify(item)}:`,
+          err
+        );
+        throw err;
+      }
     });
 
     await Promise.all(promises);
@@ -35,6 +41,7 @@ exports.create = async (req, res) => {
       message: "Games added successfully to the collection.",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send({
       message: err.message || "Some error occurred while adding the games.",
     });
@@ -46,12 +53,30 @@ exports.getAll = (req, res) => {
 
   sequelize
     .query(
-      `SELECT cg.id, cg.id_game, cg.id_list_games, COALESCE(NULLIF(p.name, ''), s.name) AS name
+      `SELECT cg.id, cg.id_list_games, cg.id_game, cg.id_steam_game, 
+              COALESCE(NULLIF(p.name, ''), s.name) AS name
       FROM collection_games cg
       JOIN private_games p ON p.id = cg.id_game AND p.b_deleted = false
       LEFT JOIN steam_games s ON s.id_app_steam = p.id_app_steam AND s.b_deleted = false
       WHERE cg.b_deleted = false AND cg.id_list_games = :id_list_games
-      ORDER BY COALESCE(NULLIF(p.name, ''), s.name)`,
+
+      UNION ALL
+
+      SELECT cg.id, cg.id_list_games, cg.id_game, cg.id_steam_game, 
+             NULLIF(sg.name, '') AS name
+      FROM collection_games cg
+      JOIN steam_games sg ON sg.id_app_steam = cg.id_steam_game AND sg.b_deleted = false
+      WHERE cg.b_deleted = false AND cg.id_list_games = :id_list_games
+
+      UNION ALL
+
+      SELECT cg.id, cg.id_list_games, cg.id_game, cg.id_steam_game, 
+             NULLIF(cg.name_custom_game, '') AS name
+      FROM collection_games cg
+      WHERE cg.b_deleted = false AND cg.id_list_games = :id_list_games
+      AND cg.id_game IS NULL AND cg.id_steam_game IS NULL
+
+      ORDER BY name`,
       {
         replacements: { id_list_games: id_list_games },
         type: sequelize.QueryTypes.SELECT,
@@ -78,10 +103,17 @@ exports.delete = async (req, res) => {
   }
 
   try {
-    const promises = bodyData.map(async (id) => {
+    const promises = bodyData.map(async (item) => {
       return CollectionGames.update(
         { b_deleted: true },
-        { where: { id_game: id, id_list_games: id_list_games } }
+        {
+          where: {
+            id: item.id,
+            id_game: item.id_game || null,
+            id_steam_game: item.id_steam_game || null,
+            id_list_games: id_list_games,
+          },
+        }
       );
     });
 

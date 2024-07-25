@@ -3,6 +3,7 @@ import AccountDataService from "../services/account.service";
 import { withRouter } from "../common/with-router";
 import { useUser } from "../userContext";
 import { useAuth } from "../authContext";
+import useAuthStore from "../store/authStore";
 import ErrorComponent from "./error.component";
 import Cropper from "./Cropper";
 import { Modal, Box, Button } from "@mui/material";
@@ -38,17 +39,26 @@ function Account(props) {
   };
 
   const getAccount = useCallback((idUser) => {
-    AccountDataService.get(idUser)
-      .then((response) => {
-        setCurrentAccount(response.data);
-        console.log(response.data);
-        setIsLoading(false);
-        setError(null);
-      })
-      .catch((e) => {
-        setError(e.message || "Что-то пошло не так");
-        setIsLoading(false);
-      });
+    if (!idUser) {
+      useAuthStore
+        .getState()
+        .fetchAccessToken()
+        .catch((error) => {
+          setError(error.message || "Что-то пошло не так");
+          setIsLoading(false);
+        });
+    } else {
+      AccountDataService.get(idUser)
+        .then((response) => {
+          setCurrentAccount(response.data);
+          setIsLoading(false);
+          setError(null);
+        })
+        .catch((e) => {
+          setError(e.message || "Что-то пошло не так");
+          setIsLoading(false);
+        });
+    }
   }, []);
 
   useEffect(() => {

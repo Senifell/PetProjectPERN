@@ -66,7 +66,7 @@ exports.findAll = async (req, res) => {
     pageSize = 50,
     search = "",
     isFree = "all",
-    isLanguage = "all",
+    hasLanguage = "all",
     sortBy = "nameAsc",
   } = req.query;
   const offset = (page - 1) * pageSize;
@@ -90,8 +90,8 @@ exports.findAll = async (req, res) => {
         replacements: {
           search_name: search ? `%${search}%` : "%",
           language:
-            isLanguage !== "all"
-              ? `%${isLanguage === "rus" ? "русский" : "английский"}%`
+            hasLanguage !== "all"
+              ? `%${hasLanguage === "rus" ? "русский" : "английский"}%`
               : "%",
         },
         type: sequelize.QueryTypes.SELECT,
@@ -126,8 +126,8 @@ exports.findAll = async (req, res) => {
         replacements: {
           search_name: search ? `%${search}%` : "%",
           language:
-            isLanguage !== "all"
-              ? `%${isLanguage === "rus" ? "русский" : "английский"}%`
+            hasLanguage !== "all"
+              ? `%${hasLanguage === "rus" ? "русский" : "английский"}%`
               : "%",
           limit: parseInt(pageSize, 10),
           offset: parseInt(offset, 10),

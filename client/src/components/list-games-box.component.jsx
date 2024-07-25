@@ -3,7 +3,7 @@ import CollectionGamesData from "../services/collection-games.service";
 import ErrorComponent from "./error.component";
 import { useUser } from "../userContext";
 import { useNavigate } from "react-router-dom";
-import EditCollectionModal from "./edit-collection-modal"; // Импортируем новый компонент модального окна
+import EditCollectionModal from "./edit-collection-modal";
 
 function ListGamesBox({ list, onUpdateList, onDelete, privateMode }) {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ function ListGamesBox({ list, onUpdateList, onDelete, privateMode }) {
           ? `Игры:${String.fromCharCode(160)}`
           : "Список игр пуст"}
         {games.slice(0, showAllGames ? games.length : 5).map((game, index) => (
-          <React.Fragment key={game.id_game}>
+          <React.Fragment key={game.id}>
             {index > 0 && <span>, &nbsp;</span>}
             <div className="game-item">
               <span>{game.name}</span>
