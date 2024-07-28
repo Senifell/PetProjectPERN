@@ -101,7 +101,7 @@ function App() {
           )}
           {loggedIn && (
             <li className="nav-item ml-auto">
-              <button className="btn btn-link nav-link" onClick={handleLogout}>
+              <button className="nav-link" onClick={handleLogout}>
                 Выход
               </button>
             </li>

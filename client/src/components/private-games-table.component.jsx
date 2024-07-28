@@ -15,7 +15,7 @@ const GamesTable = ({
       <table className="table table-striped table-hover">
         <thead className={`bg-beige ${editMode ? "lead" : ""}`}>
           <tr>
-            {!editMode && <th scope="col"></th>}
+            {!editMode && <th scope="col" className="col-add-game"></th>}
             <th scope="col" className="col-title py-3">
               Название
             </th>
@@ -44,7 +44,7 @@ const GamesTable = ({
             games.map((game) => (
               <tr key={game.id}>
                 {!editMode && (
-                  <td>
+                  <td className="col-add-game">
                     <button
                       className="btn btn-primary"
                       onClick={() => addToCollection(game.id, game.name)}

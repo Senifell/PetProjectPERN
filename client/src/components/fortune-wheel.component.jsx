@@ -28,6 +28,7 @@ function FortuneWheelPage() {
   const [eventList, setEventList] = useState([]);
 
   const eventsEndRef = useRef(null);
+  const eventListRef = useRef(null);
 
   const BackgroundColor = [
     "#6ab04c",
@@ -52,6 +53,15 @@ function FortuneWheelPage() {
     "#00a0b0",
   ];
 
+  const btnCloseStyle = {
+    padding: "0px",
+    marginBottom: "15px",
+    marginLeft: "5px",
+    lineHeight: "0.5em",
+    fontSize: "1.5em",
+    color: "grey",
+  };
+
   const getCollectionGames = useCallback(() => {
     CollectionGamesData.getAllPublic(id, user.id)
       .then((response) => {
@@ -68,15 +78,23 @@ function FortuneWheelPage() {
       });
   }, [id, user.id]);
 
-  useEffect(() => {
-    if (eventsEndRef.current) {
-      eventsEndRef.current.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = useCallback(() => {
+    if (eventListRef.current) {
+      eventListRef.current.scrollTop = eventListRef.current.scrollHeight;
     }
   }, [eventList]);
 
   useEffect(() => {
+    scrollToBottom();
+  }, [eventList, scrollToBottom]);
+
+  useEffect(() => {
     getCollectionGames();
   }, [getCollectionGames]);
+
+  const handleRefresh = () => {
+    getCollectionGames();
+  };
 
   const handleSpinClick = () => {
     setSelectedGame(null);
@@ -209,30 +227,47 @@ function FortuneWheelPage() {
         </div>
         <div className="content-container">
           <div className="left-container">
-            <div className="mode-selection">
-              <FormControl>
-                <FormLabel id="demo-controlled-radio-buttons-group">
-                  Режим
-                </FormLabel>
-                <RadioGroup
-                  aria-labelledby="demo-controlled-radio-buttons-group"
-                  name="controlled-radio-buttons-group"
-                  value={selectedMode}
-                  onChange={changeMode}
-                >
-                  <FormControlLabel
-                    value="singleWinner"
-                    control={<Radio />}
-                    label="Один победитель"
-                  />
-                  <FormControlLabel
-                    value="elimination"
-                    control={<Radio />}
-                    label="Игра на выбывание"
-                  />
-                </RadioGroup>
-              </FormControl>
+            <div className="container my-3">
+              <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
+                <div className="mb-3 mb-md-0">
+                  <FormControl>
+                    <FormLabel id="demo-controlled-radio-buttons-group">
+                      Режим
+                    </FormLabel>
+                    <RadioGroup
+                      aria-labelledby="demo-controlled-radio-buttons-group"
+                      name="controlled-radio-buttons-group"
+                      value={selectedMode}
+                      onChange={changeMode}
+                    >
+                      <FormControlLabel
+                        value="singleWinner"
+                        control={<Radio />}
+                        label="Один победитель"
+                      />
+                      <FormControlLabel
+                        value="elimination"
+                        control={<Radio />}
+                        label="Игра на выбывание"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </div>
+                <div className="d-flex justify-content-md-end align-items-md-end mt-3 mt-md-0">
+                  <button
+                    className="btn btn-primary me-2"
+                    onClick={handleSpinClick}
+                    disabled={mustSpin}
+                  >
+                    Крутить!
+                  </button>
+                  <button className="btn btn-secondary" onClick={handleRefresh}>
+                    Сбросить
+                  </button>
+                </div>
+              </div>
             </div>
+
             <div className="wheel-container">
               <Wheel
                 className="custom-wheel"
@@ -261,13 +296,6 @@ function FortuneWheelPage() {
                 outerBorderWidth={10}
                 perpendicularText={false}
               />
-              <button
-                className="btn btn-primary"
-                onClick={handleSpinClick}
-                disabled={mustSpin}
-              >
-                Крутить!
-              </button>
             </div>
           </div>
           <div className="right-container">
@@ -275,19 +303,19 @@ function FortuneWheelPage() {
               <div className="section-header">Список игр</div>
               <div className="games-list">
                 {games.map((game, index) => (
-                  <div className="game-item" key={game.id}>
+                  <div
+                    className="game-item"
+                    key={game.id}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
                     {index > 0 && <span>, &nbsp;</span>}
                     <span>{game.name}</span>
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn"
                       onClick={() => deleteFromWheelGame(game.id)}
-                      style={{
-                        marginLeft: "5px",
-                        padding: "0 5px",
-                        fontSize: "0.8em",
-                      }}
+                      style={btnCloseStyle}
                     >
-                      <span>x</span>
+                      &times;
                     </button>
                   </div>
                 ))}
@@ -301,15 +329,11 @@ function FortuneWheelPage() {
                     {index > 0 && <span>, &nbsp;</span>}
                     <span>{game.name}</span>
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn"
                       onClick={() => deleteFromExcludedGame(game.id)}
-                      style={{
-                        marginLeft: "5px",
-                        padding: "0 5px",
-                        fontSize: "0.8em",
-                      }}
+                      style={btnCloseStyle}
                     >
-                      <span>x</span>
+                      &times;
                     </button>
                   </div>
                 ))}
@@ -338,7 +362,7 @@ function FortuneWheelPage() {
                   <span>Очистить</span>
                 </button>
               </div>
-              <div className="event-list">
+              <div className="event-list" ref={eventListRef}>
                 {eventList.map((event, index) => (
                   <div key={index} className="event-item">
                     {`[${formatTime(event.timestamp)}]: ${event.message}`}

@@ -35,6 +35,10 @@
     width: 20%;
 }
 
+.col-add-game {
+    width: 2%;
+}
+
 .col-min-players,
 .col-max-players,
 .col-playtime {
