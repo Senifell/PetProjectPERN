@@ -1,19 +1,29 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, Users) => {
     const ListGames = sequelize.define("list_games", {
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       id_user: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: Users,
+          key: "id",
+        },
       },
       description: {
         type: Sequelize.STRING
       },
-      b_private : {
-        type: Sequelize.BOOLEAN
+      b_private: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
       },
       b_deleted: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       }
     });
   

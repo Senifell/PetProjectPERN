@@ -4,41 +4,31 @@ const fs = require("fs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
-// const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
-
+const db = require("./app/models");
 const schedule = require("node-schedule");
 const scheduleUpdateSteamGameInfo = require("./app/schedulers/updateSteamGameInfo");
 
 const app = express();
+const PORT = process.env.PORT || 8080;
 
 const options = {
   key: fs.readFileSync(path.resolve(__dirname, "certs/localhost-key.pem")),
   cert: fs.readFileSync(path.resolve(__dirname, "certs/localhost.pem")),
 };
+const uploadDir = path.join(__dirname, "uploads");
 
-var corsOptions = {
+const corsOptions = {
   origin: "https://localhost:8081",
   credentials: true,
 };
 
 app.use(cors(corsOptions));
-
 app.use(express.json());
-
 app.use(cookieParser());
-
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(uploadDir));
 
-const db = require("./app/models");
-// db.sequelize.sync();
-// // drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and re-sync db.");
-// });
-
-// simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to application." });
 });
@@ -49,6 +39,7 @@ require("./app/routes/list-games.routes")(app);
 require("./app/routes/private-games.routes")(app);
 require("./app/routes/steam-games.routes")(app);
 require("./app/routes/collection-games.routes")(app);
+require("./app/routes/auth.routes")(app);
 
 db.sequelize
   .sync({ force: false })
@@ -58,22 +49,13 @@ db.sequelize
     );
   })
   .catch((error) => {
-    console.error("Ошибка при создании таблицы Account:", error);
+    console.error("Ошибка при создании таблицы:", error);
   });
-
-const uploadDir = path.join(__dirname, "uploads");
-
-// Настройка маршрута для обслуживания статических файлов из папки 'uploads'
-app.use("/uploads", express.static(uploadDir));
 
 const job = schedule.scheduleJob("*/5 * * * *", async () =>
   scheduleUpdateSteamGameInfo.doUpdate()
 ); // Пока не нужно, надо переделать
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8080;
-
-// Замена app.listen на https.createServer
 https.createServer(options, app).listen(PORT, () => {
   console.log(`HTTPS Server is running on https://localhost:${PORT}`);
 });

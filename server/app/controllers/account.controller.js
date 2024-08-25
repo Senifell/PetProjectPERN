@@ -31,18 +31,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single("avatar");
 
-// Create and Save a new Account
-exports.create = (req, res) => {
-  // Validate request
+exports.create = async (req, res) => {
   if (!req.body.id_user) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
     return;
   }
-  // Create a Account
+
   const account = {
-    id_user: req.params.id,
+    id_user: req.body.id_user,
     name: req.body.name,
     surname: req.body.surname,
     gender: req.body.gender,
@@ -52,48 +50,42 @@ exports.create = (req, res) => {
     b_deleted: 0,
   };
 
-  // Save Account in the database
-  Account.create(account)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Account.",
-      });
+  try {
+    const data = await Account.create(account);
+    res.status(201).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "Ошибка создания аккаунта",
     });
+  }
 };
 
-// Find a single Account with an id
-exports.findOne = (req, res) => {
+exports.findOne = async (req, res) => {
   const userId = req.query.idUser;
-  console.log(userId);
-  Account.findOne({ where: { id_user: userId, b_deleted: false } })
-    .then((data) => {
-      if (data) {
-        const account = data.get({ plain: true });
-        if (account.picture) {
-          // Создайте URL для изображения
-          account.picture = `${req.protocol}://${req.get(
-            "host"
-          )}/uploads/${path.basename(account.picture)}`;
-        }
-        res.send(account);
-      } else {
-        res.status(404).send({
-          message: `Cannot find Account with id=${userId}.`,
-        });
+
+  try {
+    const dataAccount = await Account.findOne({ where: { id_user: userId, b_deleted: false } });
+
+    if (dataAccount) {
+      const account = dataAccount.get({ plain: true });
+
+      if (account.picture) {
+        account.picture = `${req.protocol}://${req.get("host")}/uploads/${path.basename(account.picture)}`;
       }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error retrieving Account with id=" + userId,
+
+      res.status(200).json(account);
+    } else {
+      res.status(404).json({
+        message: `Аккаунт с id=${userId} не найден.`,
       });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || `Ошибка получения аккаунта с id=${userId}.`,
     });
+  }
 };
 
-// Update a Account by the id in the request
 exports.update = (req, res) => {
   upload(req, res, async function (err) {
     if (err) {

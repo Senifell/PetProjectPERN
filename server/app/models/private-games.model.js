@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize, SteamGames) => {
+module.exports = (sequelize, Sequelize, SteamGames, Users) => {
   const PrivateGames = sequelize.define(
     "private_games",
     {
@@ -7,6 +7,11 @@ module.exports = (sequelize, Sequelize, SteamGames) => {
       },
       id_user: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: Users,
+          key: "id",
+        },
       },
       description: {
         type: Sequelize.STRING,

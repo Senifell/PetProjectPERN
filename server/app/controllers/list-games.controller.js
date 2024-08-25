@@ -172,7 +172,7 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   ListGames.update(
-    { b_deleted: 1 },
+    { b_deleted: true },
     {
       where: { id: id },
     }

@@ -1,0 +1,23 @@
+.registrationFormContainer {
+    display: flex;
+    align-items: center;
+  }
+  
+  .registrationImage {
+    flex: 1;
+    margin-left: 50px;
+    padding: 10px;
+  }
+  
+  .registrationImage img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 10%;
+    /* border: 5px solid #6F2232; */
+  }
+  
+  .registrationForm {
+    flex: 1;
+    margin-right: 20%;
+    max-width: 400px;
+  }

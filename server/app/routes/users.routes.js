@@ -7,12 +7,6 @@ module.exports = (app) => {
 
   router.get("/", users.findAll);
 
-  router.post("/auth/login", users.logInUser);
-
-  router.post("/auth/logout", users.logOutUser);
-
-  router.post("/auth/refresh", users.refreshToken);
-
   router.get("/:id", users.findOne);
 
   router.put("/:id", users.update);

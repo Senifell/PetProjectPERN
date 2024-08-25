@@ -1,29 +1,30 @@
 const jwt = require("jsonwebtoken");
 
-// Middleware для проверки JWT-токена
 const authenticateToken = async (req, res, next) => {
-  let accessToken =
-    req.headers.authorization && req.headers.authorization.split(" ")[1];
+  const authorizationHeader = req.headers.authorization;
+  const accessToken = authorizationHeader && authorizationHeader.split(" ")[1];
 
-  if (accessToken) {
-    try {
-      req.user = jwt.verify(accessToken, process.env.GWT_ACCESS_TOKEN_KEY);
-      const userIdFromToken = req.user.userId;
-      const userIdFromRequest =
-        req.query.idUser || req.params.idUser || req.body.params.idUser;
-      console.log(req.user, userIdFromToken, userIdFromRequest);
-      if (userIdFromToken != userIdFromRequest) {
-        return res
-          .status(403)
-          .json({ message: "Доступ запрещен: неверный userId" });
-      }
-      return next(); // Access Token is valid, proceed to the next middleware or route handler
-    } catch (err) {
-      console.error("Access token invalid or expired:", err.message);
-      return res.sendStatus(403);
-    }
-  } else {
+  if (!accessToken) {
     return res.sendStatus(403); // Подумать по поводу статусов ошибок
+    //return res.status(401).json({ message: "Access token is missing" }); // Используйте статус 401 для отсутствия токена
+  }
+
+  try {
+    req.user = jwt.verify(accessToken, process.env.GWT_ACCESS_TOKEN_KEY);
+    const userIdFromToken = req.user.userId;
+    const userIdFromRequest =
+      req.query.idUser || req.params.idUser || req.body.params.idUser;
+
+    if (userIdFromToken != userIdFromRequest) {
+      return res
+        .status(403)
+        .json({ message: "Доступ запрещен: неверный userId" });
+    }
+    return next();
+  } catch (err) {
+    return res
+      .status(403)
+      .json({ message: "Access token is invalid or expired" });
   }
 };
 

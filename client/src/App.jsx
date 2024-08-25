@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Link, /*Outlet*/ useNavigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-import RegistrationForm from "./components/registrationForm";
+import { AuthPage } from "./components/Auth";
 import Account from "./components/account.component";
 
 import ListGames from "./components/list-games.component";
@@ -24,7 +24,6 @@ import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./NotFound";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
   const { user } = useUser();
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -40,24 +39,8 @@ function App() {
     backgroundColor: "#272424",
   };
 
-  const updateLoggedInStatus = (status) => {
-    setLoggedIn(status);
-  };
-
-  useEffect(() => {
-    const storedLoggedIn = localStorage.getItem("loggedIn");
-
-    if (storedLoggedIn) {
-      setLoggedIn(true);
-    } else {
-      setLoggedIn(false);
-    }
-  }, [user]);
-
   const handleLogout = () => {
     logout();
-    setLoggedIn(false);
-    localStorage.removeItem("loggedIn");
     navigate("/");
   };
 
@@ -69,7 +52,7 @@ function App() {
           Главная страница
         </Link>
         <div className="navbar-nav mr-auto">
-          {loggedIn && (
+          {user && (
             <li className="nav-item">
               <Link
                 to={user ? `/list-games/${user.id}` : "/list-games"}
@@ -79,7 +62,7 @@ function App() {
               </Link>
             </li>
           )}
-          {loggedIn && (
+          {user && (
             <li className="nav-item">
               <Link
                 to={user ? `/private-games/${user.id}` : "/private-games"}
@@ -89,7 +72,7 @@ function App() {
               </Link>
             </li>
           )}
-          {loggedIn && (
+          {user && (
             <li className="nav-item">
               <Link
                 to={user ? `/steam-games/${user.id}` : "/steam-games"}
@@ -99,21 +82,21 @@ function App() {
               </Link>
             </li>
           )}
-          {loggedIn && (
+          {user && (
             <li className="nav-item ml-auto">
               <button className="nav-link" onClick={handleLogout}>
                 Выход
               </button>
             </li>
           )}
-          {!loggedIn && (
+          {!user && (
             <li className="nav-item ml-auto">
               <Link to={"/user"} className="nav-link">
-                Вход
+                Вход New
               </Link>
             </li>
           )}
-          {loggedIn && (
+          {user && (
             <li className="nav-item ml-auto">
               <Link to={`/account`} className="nav-link">
                 Личный кабинет
@@ -148,12 +131,7 @@ function App() {
             element={<FortuneWheelPage />}
           />
 
-          <Route
-            path="/user"
-            element={
-              <RegistrationForm updateLoggedInStatus={updateLoggedInStatus} />
-            }
-          />
+          <Route path="/user" element={<AuthPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

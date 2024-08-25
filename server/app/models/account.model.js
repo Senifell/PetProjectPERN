@@ -1,7 +1,12 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, Users) => {
     const Account = sequelize.define("accounts", {
       id_user: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: Users,
+          key: "id",
+        },
       },
       name: {
         type: Sequelize.STRING
@@ -22,7 +27,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       b_deleted: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       }
     });
   

@@ -21,11 +21,13 @@ db.sequelize = sequelize;
 const Users = (db.users = require("./users.model.js")(sequelize, Sequelize));
 const Accounts = (db.accounts = require("./account.model.js")(
   sequelize,
-  Sequelize
+  Sequelize,
+  Users
 ));
 const ListGames = (db.list_games = require("./list-games.model.js")(
   sequelize,
-  Sequelize
+  Sequelize,
+  Users
 ));
 const SteamGames = (db.steam_games = require("./steam-games.model.js")(
   sequelize,
@@ -34,7 +36,8 @@ const SteamGames = (db.steam_games = require("./steam-games.model.js")(
 const PrivateGames = (db.private_games = require("./private-games.model.js")(
   sequelize,
   Sequelize,
-  SteamGames
+  SteamGames,
+  Users
 ));
 const CollectionGames = (db.collection_games =
   require("./collection-games.model.js")(

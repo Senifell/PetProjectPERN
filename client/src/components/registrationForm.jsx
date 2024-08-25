@@ -3,14 +3,13 @@ import UserDataServiceInstance from "../services/user.service";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import registrationImage from "./logo_registration.jpg";
 import "./RegistrationForm.css";
 import { useAuth } from "../authContext";
 
 import { useNavigate } from "react-router-dom";
 
 //Переписать
-const RegistrationForm = ({ updateLoggedInStatus }) => {
+const RegistrationForm = () => {
   const [formData, setFormData] = useState({
     id: null,
     username: "",
@@ -65,7 +64,6 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
   };
 
   const changeMode = () => {
-    updateLoggedInStatus(false);
     setFormData({
       ...formData,
       registeredMode: !registeredMode,
@@ -102,7 +100,6 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
   };
 
   const newUser = () => {
-    updateLoggedInStatus(false);
     setFormData({
       id: null,
       username: "",
@@ -132,13 +129,11 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
         loginCodeError: null,
       });
 
-      updateLoggedInStatus(true);
       localStorage.setItem("loggedIn", "true"); //сохраним, чтобы можно было использовать после перезагрузки страницы
       // Думаю стоит изменить логику с loggedIn
     } catch (err) {
       console.log(err);
 
-      updateLoggedInStatus(false);
       setFormData({
         ...formData,
         loginCodeError:
@@ -156,8 +151,6 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
         loggedIn: false,
         loginCodeError: null,
       });
-      updateLoggedInStatus(false);
-      localStorage.removeItem("loggedIn");
 
       navigate("/");
     } catch (err) {
@@ -193,7 +186,7 @@ const RegistrationForm = ({ updateLoggedInStatus }) => {
     return (
       <div className="registration-form-container">
         <div className="registration-image">
-          <img src={registrationImage} alt="Registration" />
+          {/* <img src={registrationImage} alt="Registration" /> */}
         </div>
         <div className="registration-form">
           <div>

@@ -89,7 +89,6 @@ function Account(props) {
     AccountDataService.deleteAccount(currentAccount.id_user)
       .then(() => {
         logout();
-        localStorage.removeItem("loggedIn");
         props.router.navigate("/");
       })
       .catch((e) => {
