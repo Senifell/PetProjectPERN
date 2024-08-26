@@ -4,8 +4,6 @@ const User = db.users;
 const PrivateGames = db.private_games;
 const ListGames = db.list_games;
 const CollectionGames = db.collection_games;
-const Op = db.Sequelize.Op;
-
 const sequelize = db.sequelize;
 
 const multer = require("multer");

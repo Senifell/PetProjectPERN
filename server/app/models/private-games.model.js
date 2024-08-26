@@ -42,16 +42,6 @@ module.exports = (sequelize, Sequelize, SteamGames, Users) => {
         defaultValue: false,
       },
     }
-    // },
-    // {
-    //   indexes: [
-    //     {
-    //       unique: true,
-    //       fields: ["id_app_steam", "id_user"],
-    //       where: { id_app_steam: { [Sequelize.Op.ne]: null } }, // Использовать условие для уникального ограничения
-    //     },
-    //   ],
-    // }
   );
 
   return PrivateGames;

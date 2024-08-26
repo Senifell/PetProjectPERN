@@ -10,6 +10,7 @@
 /certs/localhost.pem
 
 /public/pic
+/fileDelete
 
 # testing
 /coverage

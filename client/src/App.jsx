@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 import { AuthPage } from "./components/Auth";
-import Account from "./components/account.component";
+import { AccountPage } from "./components/Account";
 
 import ListGames from "./components/list-games.component";
 import PrivateGames from "./components/private-games.component";
@@ -120,7 +120,7 @@ function App() {
         <Routes>
           <Route path="/" element={<PublicListGames />} />
           <Route path="/list-games" element={<PublicListGames />} />
-          <Route path="/account" element={<Account />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route path="/list-games/:userId" element={<ListGames />} />
           <Route path="/private-games/:userId" element={<PrivateGames />} />
           <Route path="/steam-games/:userId" element={<SteamGames />} />

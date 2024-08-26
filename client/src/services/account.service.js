@@ -7,12 +7,11 @@ const AccountDataService = {
     return axiosInstance.get(`/account`, { params });
   },
 
-  create: (data) => {
-    return axiosInstance.post("/account", data);
-  },
+  // create: (data) => {
+  //   return axiosInstance.post("/account", data);
+  // },
 
   update: (idUser, formData) => {
-    // const params = { idUser };
     return axiosInstance.post(`/account/${idUser}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",

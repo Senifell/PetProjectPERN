@@ -1,0 +1,30 @@
+.modalStyle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modalBox {
+  width: 600px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  /* border: 5px solid #328daa; */
+  border: 7px solid rgb(199, 4, 4);
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.buttonDelete {
+  background: red;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.buttonCancel {
+  background: grey;
+  margin-top: 10px;
+}

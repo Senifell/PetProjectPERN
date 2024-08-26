@@ -1,0 +1,36 @@
+.boxStyle {
+    width: 500px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border: 5px solid #328daa;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+  
+  .modalStyle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sliderStyle {
+    margin: 0 auto;
+    width: 50%;
+    color: #328daa;
+  }
+  
+  .buttonStyleSave {
+    background: #5596e6;
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
+  
+  .buttonStyleClose {
+    background: grey;
+    margin-bottom: 10px;
+  }
+  
