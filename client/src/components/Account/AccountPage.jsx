@@ -34,23 +34,20 @@ function AccountPage() {
   };
 
   const getAccount = useCallback(async (idUser) => {
-    if (!idUser) {
-      try {
+
+    setIsLoading(true);
+    try {
+      if (!idUser) {
         await useAuthStore.getState().fetchAccessToken();
-      } catch (error) {
-        setError(error.message || "Что-то пошло не так");
-        setIsLoading(false);
-      }
-    } else {
-      try {
+      } else {
         const response = await AccountDataService.get(idUser);
         setCurrentAccount(response.data);
-        setIsLoading(false);
         setError(null);
-      } catch (e) {
-        setError(e.message || "Что-то пошло не так");
-        setIsLoading(false);
       }
+    } catch (e) {
+      setError(e.message || "Что-то пошло не так");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 

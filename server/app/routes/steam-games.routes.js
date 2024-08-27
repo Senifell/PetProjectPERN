@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const steamGames = require("../controllers/steam-games.controller.js");
-  const authenticateToken = require("../middleware/authenticateToken");
+  const authenticateToken = require("../middlewares/authenticateToken");
 
   var router = require("express").Router();
 

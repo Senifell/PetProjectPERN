@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const cors = require("cors");
 const db = require("./app/models");
+const errorHandler = require('./app/middlewares/errorHandler');
 const schedule = require("node-schedule");
 const scheduleUpdateSteamGameInfo = require("./app/schedulers/updateSteamGameInfo");
 
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(uploadDir));
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to application." });

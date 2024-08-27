@@ -1,15 +1,19 @@
 const db = require("../models");
 const Account = db.accounts;
-const User = db.users;
+const Users = db.users;
 const PrivateGames = db.private_games;
 const ListGames = db.list_games;
 const CollectionGames = db.collection_games;
 const sequelize = db.sequelize;
 
+const NotFoundError = require("../errors/NotFoundError");
+const ValidationError = require("../errors/ValidationError");
+
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const listGamesModel = require("../models/list-games.model");
+const util = require("util");
+const unlinkAsync = util.promisify(fs.unlink);
 
 // Настройка места хранения загруженных изображений
 const uploadDir = path.join(__dirname, "../../uploads");
@@ -30,31 +34,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single("avatar");
 
 exports.create = async (req, res) => {
-  if (!req.body.id_user) {
-    res.status(400).send({
-      message: "Content can not be empty!",
-    });
-    return;
+  const userId = req.body.id_user;
+  if (!userId) {
+    throw new ValidationError("Ошибка получения userId");
   }
 
   const account = {
-    id_user: req.body.id_user,
+    id_user: userId,
     name: req.body.name,
     surname: req.body.surname,
     gender: req.body.gender,
     description: req.body.description,
     steam_id: req.body.steam_id,
     picture: req.body.picture,
-    b_deleted: 0,
+    b_deleted: false,
   };
 
   try {
     const data = await Account.create(account);
     res.status(201).json(data);
   } catch (err) {
-    res.status(500).json({
-      message: err.message || "Ошибка создания аккаунта",
-    });
+    next(err);
   }
 };
 
@@ -62,184 +62,199 @@ exports.findOne = async (req, res) => {
   const userId = req.query.idUser;
 
   try {
-    const dataAccount = await Account.findOne({ where: { id_user: userId, b_deleted: false } });
-
-    if (dataAccount) {
-      const account = dataAccount.get({ plain: true });
-
-      if (account.picture) {
-        account.picture = `${req.protocol}://${req.get("host")}/uploads/${path.basename(account.picture)}`;
-      }
-
-      res.status(200).json(account);
-    } else {
-      res.status(404).json({
-        message: `Аккаунт с id=${userId} не найден.`,
-      });
+    if (!userId) {
+      throw new ValidationError("Ошибка получения userId");
     }
-  } catch (err) {
-    res.status(500).json({
-      message: err.message || `Ошибка получения аккаунта с id=${userId}.`,
+
+    const dataAccount = await Account.findOne({
+      where: { id_user: userId, b_deleted: false },
     });
+
+    if (!dataAccount) {
+      throw new NotFoundError(`Не удалось найти аккаунт с id=${userId}.`);
+    }
+
+    const account = dataAccount.get({ plain: true });
+
+    if (account.picture) {
+      account.picture = `${req.protocol}://${req.get(
+        "host"
+      )}/uploads/${path.basename(account.picture)}`;
+    }
+
+    res.status(200).json(account);
+  } catch (err) {
+    next(err);
   }
 };
 
-exports.update = (req, res) => {
-  upload(req, res, async function (err) {
+async function deleteImageFromUploads(picture) {
+  const oldPicturePath = path.join(
+    __dirname,
+    "../../uploads",
+    path.basename(picture)
+  );
+  try {
+    await unlinkAsync(oldPicturePath);
+    console.log("Старый файл успешно удален");
+  } catch (fileError) {
+    console.log("Ошибка при удалении старого файла", fileError.message);
+  }
+}
+
+exports.update = async (req, res, next) => {
+  upload(req, res, async (err) => {
     if (err) {
       console.log("Ошибка при загрузке файла", err.message);
-      return res
-        .status(500)
-        .send({ message: "Ошибка при загрузке файла", error: err });
+      return next(new ValidationError("Ошибка при загрузке файла"));
     }
 
-    const idUser = req.params.idUser;
+    const userId = req.params.idUser;
+
+    if (!userId) {
+      throw new ValidationError("Ошибка получения userId");
+    }
 
     let requestData;
     try {
       requestData = JSON.parse(req.body.data);
-    } catch (e) {
-      return res.status(400).send({ message: "Invalid JSON data" });
+    } catch (error) {
+      return next(new ValidationError("Invalid JSON data"));
     }
 
     try {
       const account = await Account.findOne({
-        where: { id_user: idUser, b_deleted: false },
+        where: { id_user: userId, b_deleted: false },
       });
 
-      if (account) {
-        let oldPictureUrl = account.picture;
-        let oldPicture = oldPictureUrl ? path.basename(oldPictureUrl) : null;
-
-        if (req.file && oldPicture) {
-          const oldPicturePath = path.join(
-            __dirname,
-            "../../uploads",
-            oldPicture
-          );
-          fs.unlink(oldPicturePath, (err) => {
-            if (err) {
-              console.log("Ошибка при удалении старого файла", err.message);
-            } else {
-              console.log("Старый файл успешно удален");
-            }
-          });
-        }
-
-        const updatedData = {
-          name: requestData.name,
-          surname: requestData.surname,
-          gender: requestData.gender,
-          description: requestData.description,
-          steam_id: requestData.steam_id,
-          picture: req.file ? req.file.filename : requestData.picture,
-        };
-
-        const num = await Account.update(updatedData, {
-          where: { id_user: idUser, b_deleted: false },
-        });
-
-        if (num == 1) {
-          res.send({
-            message: "Account was updated successfully.",
-          });
-        } else {
-          res.send({
-            message: `Cannot update Account with id=${idUser}. Maybe Account was not found or req.body is empty!`,
-          });
-        }
-      } else {
-        res.status(404).send({
-          message: `Cannot find Account with id=${idUser}.`,
-        });
+      if (!account) {
+        throw new NotFoundError(`Аккаунт id=${userId} не найден.`);
       }
-    } catch (err) {
-      res.status(500).send({
-        message: "Error updating Account with id=" + idUser,
+
+      if (req.file && account.picture) {
+        await deleteImageFromUploads(account.picture);
+      }
+
+      const updatedData = {
+        name: requestData.name,
+        surname: requestData.surname,
+        gender: requestData.gender,
+        description: requestData.description,
+        steam_id: requestData.steam_id,
+        picture: req.file ? `/uploads/${req.file.filename}` : account.picture,
+      };
+
+      const [updated] = await Account.update(updatedData, {
+        where: { id_user: userId, b_deleted: false },
       });
+
+      if (updated === 1) {
+        res.status(200).send({ message: "Данные аккаунта успешно обновлены." });
+      } else {
+        throw new ValidationError(
+          `Ошибка обновления данных аккаунта id=${userId}.`
+        );
+      }
+    } catch (error) {
+      next(error);
     }
   });
 };
 
-// Delete a Account with the specified id in the request
+async function deleteAccount(idUser, transaction) {
+  const [affectedRows] = await Account.update(
+    { b_deleted: true },
+    {
+      where: { id_user: idUser, b_deleted: false },
+      transaction,
+    }
+  );
+  return affectedRows;
+}
+
+async function deleteUser(idUser, transaction) {
+  const [affectedRows] = await Users.update(
+    { b_deleted: true },
+    {
+      where: { id: idUser, b_deleted: false },
+      transaction,
+    }
+  );
+  return affectedRows;
+}
+
+async function deleteUserGamesAndCollection(idUser, transaction) {
+  const listGames = await ListGames.findAll({
+    where: { id_user: idUser, b_deleted: false },
+    transaction,
+  });
+
+  for (const list of listGames) {
+    await CollectionGames.update(
+      { b_deleted: true },
+      {
+        where: { id_list_games: list.id, b_deleted: false },
+        transaction,
+      }
+    );
+  }
+
+  await ListGames.update(
+    { b_deleted: true },
+    {
+      where: { id_user: idUser, b_deleted: false },
+      transaction,
+    }
+  );
+
+  await PrivateGames.update(
+    { b_deleted: true },
+    {
+      where: { id_user: idUser, b_deleted: false },
+      transaction,
+    }
+  );
+}
+
 exports.delete = async (req, res) => {
   const idUser = req.params.idUser;
 
-  const t = await sequelize.transaction();
+  if (!idUser) {
+    throw new ValidationError("Ошибка получения userId");
+  }
+
+  const transaction = await sequelize.transaction();
 
   try {
-    const accountResult = await Account.update(
-      { b_deleted: true },
-      {
-        where: { id_user: idUser, b_deleted: false },
-        transaction: t,
-      }
-    );
+    const accountDelete = await deleteAccount(idUser, transaction);
 
-    if (accountResult[0] === 1) {
-      const listGames = await ListGames.findAll({
-        where: { id_user: idUser, b_deleted: false },
-        transaction: t,
-      });
-
-      for (const list of listGames) {
-        await CollectionGames.update(
-          { b_deleted: true },
-          {
-            where: { id_list_games: list.id, b_deleted: false },
-            transaction: t,
-          }
-        );
-      }
-
-      await ListGames.update(
-        { b_deleted: true },
-        {
-          where: { id_user: idUser, b_deleted: false },
-          transaction: t,
-        }
-      );
-
-      await PrivateGames.update(
-        { b_deleted: true },
-        {
-          where: { id_user: idUser, b_deleted: false },
-          transaction: t,
-        }
-      );
-
-      const userResult = await User.update(
-        { b_deleted: true },
-        {
-          where: { id: idUser, b_deleted: false },
-          transaction: t,
-        }
-      );
-
-      if (userResult[0] === 1) {
-        // Фиксация транзакции, если все операции успешны
-        await t.commit();
-        res.send({
-          message: "Аккаунт успешно удален!",
-        });
-      } else {
-        // Откат транзакции, если удаление пользователя не удалось
-        await t.rollback();
-        res.send({
-          message: `Ошибка удаления пользователя, id=${idUser}.`,
-        });
-      }
-    } else {
-      // Откат транзакции, если удаление аккаунта не удалось
-      await t.rollback();
-      res.send({
-        message: `Ошибка удаления аккаунта, id=${idUser}.`,
-      });
+    if (accountDelete === 0) {
+      await transaction.rollback();
+      return res
+        .status(404)
+        .send({ message: `Ошибка удаления аккаунта, id=${idUser}.` });
     }
+
+    await deleteUserGamesAndCollection(idUser, transaction);
+
+    const userDelete = await deleteUser(idUser, transaction);
+
+    if (userDelete === 0) {
+      await transaction.rollback();
+      return res
+        .status(404)
+        .send({ message: `Ошибка удаления пользователя, id=${idUser}.` });
+    }
+
+    await transaction.commit();
+    res.send({ message: "Аккаунт успешно удален!" });
   } catch (err) {
-    await t.rollback();
-    res.status(500).send({
-      message: `Ошибка при удалении аккаунта, id=${idUser}.`,
-    });
+    console.error(err);
+    if (transaction.finished !== "commit") {
+      await transaction.rollback();
+    }
+    res
+      .status(500)
+      .send({ message: `Ошибка при удалении аккаунта, id=${idUser}.` });
   }
 };

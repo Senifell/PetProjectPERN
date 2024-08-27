@@ -19,12 +19,13 @@
 }
 
 .buttonDelete {
-  background: red;
+  background-color: red;
   margin-right: 10px;
   margin-top: 10px;
+  margin: 10px;
 }
 
 .buttonCancel {
-  background: grey;
+  background-color: grey;
   margin-top: 10px;
 }

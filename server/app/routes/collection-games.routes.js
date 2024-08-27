@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const collectionGames = require("../controllers/collection-games.controller.js");
-  const authenticateToken = require("../middleware/authenticateToken"); // Импорт middleware
+  const authenticateToken = require("../middlewares/authenticateToken"); // Импорт middleware
 
   var router = require("express").Router();
 

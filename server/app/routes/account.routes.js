@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const account = require("../controllers/account.controller.js");
-  const authenticateToken = require("../middleware/authenticateToken");
+  const authenticateToken = require("../middlewares/authenticateToken");
 
   var router = require("express").Router();
 
